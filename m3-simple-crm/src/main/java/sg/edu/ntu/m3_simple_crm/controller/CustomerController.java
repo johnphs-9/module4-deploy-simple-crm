@@ -119,13 +119,13 @@ public class CustomerController {
      * Deletes an existing customer with the specified ID.
      * 
      * @param id the unique ID of the customer to be deleted
-     * @return HTTP 204 NO_CONTENT with no body; missing customers are handled globally
+     * @return HTTP 200 OK with no body; missing customers are handled globally
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
         logger.info("Customer deleted with ID: " + id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**

@@ -2,6 +2,7 @@ package sg.edu.ntu.m3_simple_crm.config;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,7 +26,7 @@ import sg.edu.ntu.m3_simple_crm.security.JwtService;
 /**
  * Security configuration with two complementary authentication mechanisms:
  * <ul>
- *   <li><b>HTTP Basic</b> (pt1): in-memory users {@code user}/{@code admin} with RBAC on {@code /customers/**}.</li>
+ *   <li><b>HTTP Basic</b>: configured user, manager and admin accounts with RBAC on {@code /customers/**}.</li>
  *   <li><b>JWT Bearer</b> (pt2): issued at {@code POST /auth/login}, enforced on {@code /api/**}.</li>
  * </ul>
  * Unauthenticated requests → 401 (HttpStatusEntryPoint); authenticated but unauthorized → 403.
@@ -49,7 +50,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/**").authenticated()                          // L44
                 .requestMatchers("/health").permitAll()                              // pt1 R11
                 .requestMatchers(HttpMethod.POST, "/customers/**").hasRole("ADMIN")  // pt1 R12
-                .requestMatchers(HttpMethod.PUT, "/customers/**").hasRole("ADMIN")   // pt1 default
+                .requestMatchers(HttpMethod.PUT, "/customers/**").hasAnyRole("MANAGER", "ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/customers/**").hasRole("ADMIN")// pt1 R13
                 .requestMatchers(HttpMethod.GET, "/customers/**").authenticated()    // pt1 R14
                 .anyRequest().authenticated())
@@ -65,19 +66,30 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    /** pt1 in-memory users (unchanged) — also consulted by JwtAuthFilter for role mapping (D2). */
+    /** In-memory users are also consulted by JwtAuthFilter for role mapping. */
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder,
+            @Value("${app.auth.username}") String username,
+            @Value("${app.auth.password}") String password,
+            @Value("${app.auth.manager.username}") String managerUsername,
+            @Value("${app.auth.manager.password}") String managerPassword,
+            @Value("${app.auth.admin.username}") String adminUsername,
+            @Value("${app.auth.admin.password}") String adminPassword) {
         var user = User.builder()
-                .username("user")
-                .password(passwordEncoder.encode("user123"))
+                .username(username)
+                .password(passwordEncoder.encode(password))
                 .roles("USER")
                 .build();
         var admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("admin123"))
+                .username(adminUsername)
+                .password(passwordEncoder.encode(adminPassword))
                 .roles("ADMIN")
                 .build();
-        return new InMemoryUserDetailsManager(List.of(user, admin));
+        var manager = User.builder()
+                .username(managerUsername)
+                .password(passwordEncoder.encode(managerPassword))
+                .roles("MANAGER")
+                .build();
+        return new InMemoryUserDetailsManager(List.of(user, manager, admin));
     }
 }

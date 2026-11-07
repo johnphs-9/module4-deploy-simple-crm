@@ -30,7 +30,7 @@ On top of the existing pt1 app (HTTP Basic + RBAC on `/customers/**`), PT2 adds:
 | `GET /api/hello` protected endpoint | `controller/HelloController.java` | J13 |
 
 Two authentication mechanisms now coexist (by design, decision D3):
-- **HTTP Basic** (pt1): in-memory users `user`/`user123` (ROLE_USER) and `admin`/`admin123` (ROLE_ADMIN), RBAC on `/customers/**`.
+- **HTTP Basic**: in-memory users configured by `APP_USER_*`, `APP_MANAGER_*`, and `APP_ADMIN_*`, with RBAC on `/customers/**`.
 - **JWT Bearer** (pt2): issued at `POST /auth/login` with the assignment's simple fixed-check mechanism whose values come from `.env`
   (`APP_USER_USERNAME=user` / `APP_USER_PASSWORD=password` — the assignment defaults), enforced on `/api/**`.
 
@@ -116,10 +116,11 @@ re-run the matrix to mint fresh tokens.)
 ### How to reproduce
 
 **Prerequisite:** a module-root `.env` containing `APP_JWT_SECRET`, `APP_USER_USERNAME=user`,
-`APP_USER_PASSWORD=password`, and Postgres access for `simple_crm` (see `.env.example`).
+`APP_USER_PASSWORD=password`, `APP_MANAGER_USERNAME`, `APP_MANAGER_PASSWORD`, `APP_ADMIN_USERNAME`, `APP_ADMIN_PASSWORD`, and Postgres access for `simple_crm` (see `.env.example`).
 
 ```bash
 cd m3-simple-crm/m3-simple-crm
+set -a; source .env; set +a  # export credentials for the curl examples
 ./mvnw spring-boot:run        # dev profile; needs local Postgres simple_crm on localhost:5432
 
 # 1) Protected endpoint without token → expect 401
@@ -137,8 +138,8 @@ curl -i -X POST http://localhost:8080/auth/login \
 curl -i http://localhost:8080/api/hello -H "Authorization: Bearer <TOKEN>"
 
 # 5) pt1 regression: Basic auth still works alongside JWT
-curl -i -u user:user123 http://localhost:8080/customers          # 200
-curl -i -u admin:admin123 -X POST -H 'Content-Type: application/json' \
+curl -i -u "$APP_USER_USERNAME:$APP_USER_PASSWORD" http://localhost:8080/customers # 200
+curl -i -u "$APP_ADMIN_USERNAME:$APP_ADMIN_PASSWORD" -X POST -H 'Content-Type: application/json' \
   -d '{"firstName":"A","lastName":"B","email":"a@b.co","contactNo":"12345678","jobTitle":"Engineer","yearOfBirth":1990}' \
   http://localhost:8080/customers                                 # 201
 curl -i http://localhost:8080/health                             # 200 (public)
@@ -160,12 +161,13 @@ In Postman, the same four requests map to: (1) GET `/api/hello` with no auth →
   `jwt.secret` is defined in the profile files as `${APP_JWT_SECRET}` (dev) / a fixed test default
   (test); the literal value is no longer in any tracked file. Fresh clones must copy `.env.example`
   → `.env` and set `APP_JWT_SECRET` (any value ≥ 32 bytes for HS256) before the dev profile will start.
-- **Two distinct credential sets (D1, updated):** the pt1 in-memory store uses `user`/`user123`
-  (Basic Auth), while `POST /auth/login` uses the externalised assignment defaults
-  `user`/`password` (`.env` `APP_USER_*` → `app.auth.*`). This is an intentional, spec-mandated
-  divergence; the values are configuration, the fixed-check mechanism is unchanged.
+- **Configured credentials:** HTTP Basic and `POST /auth/login` share `APP_USER_*` via
+  `app.auth.username` and `app.auth.password`. Basic manager and admin accounts use
+  `APP_MANAGER_*` and `APP_ADMIN_*` respectively; JWT login continues to accept only the configured user.
+- **Customer permissions:** all three roles may read; only admin may create or delete;
+  manager and admin may update. Successful deletion returns HTTP 200 with an empty body.
 - **Role mapping (D2):** a JWT-authenticated principal's roles are mapped through the existing
-  `UserDetailsService` (`user`→ROLE_USER, `admin`→ROLE_ADMIN); unknown usernames fall back to
+  `UserDetailsService` (configured user → ROLE_USER, manager → ROLE_MANAGER, admin → ROLE_ADMIN); unknown usernames fall back to
   ROLE_USER. JWT users therefore behave identically to Basic users under the pt1 RBAC rules.
 
 ---

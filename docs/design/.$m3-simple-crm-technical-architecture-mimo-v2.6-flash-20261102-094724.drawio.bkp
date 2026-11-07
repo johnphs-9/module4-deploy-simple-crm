@@ -1,0 +1,339 @@
+<mxfile host="Electron" agent="MiMo-V2.6-Flash">
+  <diagram id="m3-technical-architecture" name="Technical architecture">
+    <mxGraphModel dx="3100" dy="2220" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1650" pageHeight="1400" background="#FCFCFC" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="bg" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FCFCFC;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="1400" width="1650" x="-450" y="-18" as="geometry" />
+        </mxCell>
+        <mxCell id="rail" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#EDB86C;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="1400" width="16" as="geometry" />
+        </mxCell>
+        <mxCell id="title" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=20;fontStyle=1;fontColor=#1A1B1C;" value="m3-simple-crm — Technical Architecture" vertex="1">
+          <mxGeometry height="30" width="1536" x="32" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=14;fontColor=#555555;" value="Spring Boot 4.1.1 · Java 21 · Maven single module — customer REST API with HTTP Basic RBAC (PT1) + JWT bearer auth (PT2) · Spring Data JPA · JUnit 5 + MockMvc tests" vertex="1">
+          <mxGeometry height="20" width="1536" x="32" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="meta" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=11.33;fontColor=#555555;" value="source: m3-simple-crm/ (pom.xml, src/main, src/test) · generated 2026-11-02 09:47 +08 · model MiMo-V2.6-Flash" vertex="1">
+          <mxGeometry height="16" width="1536" x="32" y="82" as="geometry" />
+        </mxCell>
+        <mxCell id="divHeader" edge="1" parent="1" style="edgeStyle=none;rounded=0;html=0;strokeColor=#555555;strokeWidth=1.5;endArrow=none;endFill=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="32" y="117" as="sourcePoint" />
+            <mxPoint x="1568" y="117" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="app" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=none;strokeColor=#1A1B1C;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=16;spacingTop=8;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=16;fontStyle=1;fontColor=#1A1B1C;" value="m3-simple-crm — Spring Boot 4.1.1 application (single JAR · embedded Tomcat · port 8080 dev / 8081 prod)" vertex="1">
+          <mxGeometry height="680" width="1284" x="284" y="142" as="geometry" />
+        </mxCell>
+        <mxCell id="client" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#66ABFF;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="API client&#xa;Postman / curl&#xa;(no bundled frontend)" vertex="1">
+          <mxGeometry height="90" width="170" x="32" y="212" as="geometry" />
+        </mxCell>
+        <mxCell id="gSec" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=14;fontStyle=1;fontColor=#1A1B1C;" value="SECURITY" vertex="1">
+          <mxGeometry height="18" width="300" x="300" y="186" as="geometry" />
+        </mxCell>
+        <mxCell id="gWeb" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=14;fontStyle=1;fontColor=#1A1B1C;" value="WEB — controllers" vertex="1">
+          <mxGeometry height="18" width="300" x="680" y="186" as="geometry" />
+        </mxCell>
+        <mxCell id="gSvc" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=14;fontStyle=1;fontColor=#1A1B1C;" value="SERVICE" vertex="1">
+          <mxGeometry height="18" width="300" x="1080" y="186" as="geometry" />
+        </mxCell>
+        <mxCell id="gPer" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=14;fontStyle=1;fontColor=#1A1B1C;" value="PERSISTENCE" vertex="1">
+          <mxGeometry height="18" width="300" x="300" y="644" as="geometry" />
+        </mxCell>
+        <mxCell id="sFilter" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#66ABFF;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="JwtAuthFilter (OncePerRequestFilter)&#xa;validates Bearer token → SecurityContext&#xa;unknown subject → ROLE_USER · continues chain" vertex="1">
+          <mxGeometry height="76" width="320" x="300" y="212" as="geometry" />
+        </mxCell>
+        <mxCell id="sJwt" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#66ABFF;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="JwtService (@Service · jjwt 0.11.5)&#xa;generate / extract / validate HS256&#xa;secret + 1 h expiry ← .env properties" vertex="1">
+          <mxGeometry height="76" width="320" x="300" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="sBasic" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#66ABFF;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="HTTP Basic auth (kept from PT1)&#xa;in-memory users · BCrypt&#xa;401 entry point · 403 role denial" vertex="1">
+          <mxGeometry height="76" width="320" x="300" y="388" as="geometry" />
+        </mxCell>
+        <mxCell id="sUsers" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#66ABFF;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="UserDetailsService (in-memory)&#xa;user/user123 → ROLE_USER&#xa;admin/admin123 → ROLE_ADMIN" vertex="1">
+          <mxGeometry height="76" width="320" x="300" y="476" as="geometry" />
+        </mxCell>
+        <mxCell id="sNote" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#F4D7D7;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="Caveat — filter instantiated inline in SecurityConfig (not a bean)" vertex="1">
+          <mxGeometry height="64" width="320" x="300" y="564" as="geometry" />
+        </mxCell>
+        <mxCell id="wAuth" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#66ABFF;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="AuthController&#xa;POST /auth/login — public&#xa;fixed simple-check vs .env credentials" vertex="1">
+          <mxGeometry height="76" width="340" x="680" y="212" as="geometry" />
+        </mxCell>
+        <mxCell id="wHealth" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#66ABFF;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="HealthController&#xa;GET /health — public · {status: UP}" vertex="1">
+          <mxGeometry height="56" width="340" x="680" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="wHello" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#66ABFF;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="HelloController&#xa;GET /api/hello — JWT demo · authenticated" vertex="1">
+          <mxGeometry height="56" width="340" x="680" y="368" as="geometry" />
+        </mxCell>
+        <mxCell id="wCust" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#66ABFF;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="CustomerController&#xa;CRUD + search on /customers/{id}&#xa;POST · PUT · DELETE → ADMIN&#xa;GET → authenticated" vertex="1">
+          <mxGeometry height="96" width="340" x="680" y="436" as="geometry" />
+        </mxCell>
+        <mxCell id="wErr" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#F4D7D7;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="GlobalExceptionHandler&#xa;404 not-found · 400 validation · 500&#xa;→ ErrorResponse { message, timestamp }" vertex="1">
+          <mxGeometry height="80" width="340" x="680" y="544" as="geometry" />
+        </mxCell>
+        <mxCell id="vCust" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#66ABFF;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="CustomerServiceImpl (@Primary)&#xa;implements CustomerService — CRUD + searches" vertex="1">
+          <mxGeometry height="64" width="460" x="1080" y="212" as="geometry" />
+        </mxCell>
+        <mxCell id="vData" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#66ABFF;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="DataLoader (@Component)&#xa;@PostConstruct: deleteAll() then reseed 4 customers&#xa;runs on every startup (dev and prod)" vertex="1">
+          <mxGeometry height="76" width="460" x="1080" y="288" as="geometry" />
+        </mxCell>
+        <mxCell id="vDemo" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#F4D7D7;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="Caveat — DemoService is a plain POJO (not a bean); unit tests only" vertex="1">
+          <mxGeometry height="64" width="220" x="1080" y="376" as="geometry" />
+        </mxCell>
+        <mxCell id="vCourse" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#F4D7D7;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="Caveat — CourseRepository unused; no Course/Student API" vertex="1">
+          <mxGeometry height="64" width="220" x="1320" y="376" as="geometry" />
+        </mxCell>
+        <mxCell id="rCust" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#66ABFF;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="CustomerRepository&#xa;findByFirstName · findByJobTitleJPQL" vertex="1">
+          <mxGeometry height="64" width="320" x="300" y="674" as="geometry" />
+        </mxCell>
+        <mxCell id="rInter" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#66ABFF;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="InteractionRepository&#xa;JpaRepository (CRUD only)" vertex="1">
+          <mxGeometry height="64" width="340" x="680" y="674" as="geometry" />
+        </mxCell>
+        <mxCell id="_UWQKrKwAX6pCP-SFzxY-5" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="_UWQKrKwAX6pCP-SFzxY-4" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="530" y="778" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="env" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FCFCFC;strokeColor=#1A1B1C;strokeWidth=1.5;dashed=1;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value=".env (gitignored)&#xa;APP_JWT_SECRET · APP_USER_*" vertex="1">
+          <mxGeometry height="72" width="240" x="32" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="h2" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FCFCFC;strokeColor=#1A1B1C;strokeWidth=1.5;dashed=1;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="H2 in-memory (test only)&#xa;crm-tests · create-drop" vertex="1">
+          <mxGeometry height="72" width="280" x="380" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="pg" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=0;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#FCFCFC;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="PostgreSQL (dev/prod)&#xa;localhost:5432/simple_crm" vertex="1">
+          <mxGeometry height="72" width="300" x="700" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="tests" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FCFCFC;strokeColor=#1A1B1C;strokeWidth=1.5;dashed=1;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="Test suite (test scope)&#xa;JUnit 5 + Mockito · MockMvc · 39 tests" vertex="1">
+          <mxGeometry height="72" width="300" x="1040" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="pApi" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#F0F0C0;strokeColor=#1A1B1C;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="200" width="880" x="32" y="984" as="geometry" />
+        </mxCell>
+        <mxCell id="pApiT" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=16;fontStyle=1;fontColor=#1A1B1C;" value="API contract (from controllers — application-level, enforced by the security chain)" vertex="1">
+          <mxGeometry height="22" width="832" x="56" y="1002" as="geometry" />
+        </mxCell>
+        <mxCell id="pConf" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#F0F0C0;strokeColor=#1A1B1C;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="200" width="624" x="944" y="984" as="geometry" />
+        </mxCell>
+        <mxCell id="pConfT" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=16;fontStyle=1;fontColor=#1A1B1C;" value="Runtime configuration &amp; scope" vertex="1">
+          <mxGeometry height="22" width="576" x="968" y="1002" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="POST /auth/login — public — 200 {token} · 401 invalid credentials (fixed simple check)" vertex="1">
+          <mxGeometry height="16" width="832" x="56" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="GET /customers · /{id} · /search — authenticated — 200 [Customer]/Customer · 404" vertex="1">
+          <mxGeometry height="16" width="832" x="56" y="1046" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="GET /customers/search/job?jobTitle — authenticated — 200 [Customer]" vertex="1">
+          <mxGeometry height="16" width="832" x="56" y="1062" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="POST /customers — ADMIN — 201 Customer · 400 invalid body · 401/403" vertex="1">
+          <mxGeometry height="16" width="832" x="56" y="1078" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="PUT /customers/{id} · DELETE /customers/{id} — ADMIN — 200 Customer · 204 · 400 · 404" vertex="1">
+          <mxGeometry height="16" width="832" x="56" y="1094" as="geometry" />
+        </mxCell>
+        <mxCell id="a6" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="POST /customers/{id}/interactions — ADMIN — 201 Interaction · 404 · 500 on null" vertex="1">
+          <mxGeometry height="16" width="832" x="56" y="1110" as="geometry" />
+        </mxCell>
+        <mxCell id="a7" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="GET /api/hello — authenticated (JWT or Basic) — 200 text · 401 without token" vertex="1">
+          <mxGeometry height="16" width="832" x="56" y="1126" as="geometry" />
+        </mxCell>
+        <mxCell id="a8" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="GET /health — public — 200 {status: UP}" vertex="1">
+          <mxGeometry height="16" width="832" x="56" y="1142" as="geometry" />
+        </mxCell>
+        <mxCell id="a9" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="Errors → ErrorResponse {message, timestamp}: 400 · 404 · 500 (advice)" vertex="1">
+          <mxGeometry height="16" width="832" x="56" y="1158" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="profile dev: port 8080 · PostgreSQL localhost:5432/simple_crm" vertex="1">
+          <mxGeometry height="16" width="576" x="968" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="ddl-auto=create — tables dropped and recreated every startup" vertex="1">
+          <mxGeometry height="16" width="576" x="968" y="1046" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="spring.config.import=optional:file:.env[.properties]" vertex="1">
+          <mxGeometry height="16" width="576" x="968" y="1062" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="APP_JWT_SECRET · APP_USER_* → JWT secret + login credentials" vertex="1">
+          <mxGeometry height="16" width="576" x="968" y="1078" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="BCrypt in-memory: user (USER) · admin (ADMIN); JWT → 1 h HS256" vertex="1">
+          <mxGeometry height="16" width="576" x="968" y="1094" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="prod: port 8081 — no data-source URL in committed profile" vertex="1">
+          <mxGeometry height="16" width="576" x="968" y="1110" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="test: H2 mem crm-tests (create-drop) · 39 tests green" vertex="1">
+          <mxGeometry height="16" width="576" x="968" y="1126" as="geometry" />
+        </mxCell>
+        <mxCell id="c8" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="No CI/CD, hosting, or frontend — local development only" vertex="1">
+          <mxGeometry height="16" width="576" x="968" y="1142" as="geometry" />
+        </mxCell>
+        <mxCell id="c9" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Mono,SFMono-Regular,Menlo,Consolas,monospace;fontSize=13.33;fontColor=#1A1B1C;" value="JWT validated on every request; unknown subject → ROLE_USER" vertex="1">
+          <mxGeometry height="16" width="576" x="968" y="1158" as="geometry" />
+        </mxCell>
+        <mxCell id="caveat" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#F4D7D7;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="Caveat — application-prod.properties defines no spring.datasource.url; supply one at run time (env/.env) or JPA startup fails" vertex="1">
+          <mxGeometry height="40" width="1536" x="32" y="1196" as="geometry" />
+        </mxCell>
+        <mxCell id="divTrailer" edge="1" parent="1" style="edgeStyle=none;rounded=0;html=0;strokeColor=#555555;strokeWidth=1.5;endArrow=none;endFill=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="32" y="1288" as="sourcePoint" />
+            <mxPoint x="1568" y="1288" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lgBlue" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#66ABFF;strokeColor=#1A1B1C;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="14" width="22" x="32" y="1306" as="geometry" />
+        </mxCell>
+        <mxCell id="lgBlueT" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=14;fontColor=#1A1B1C;" value="code component / runtime path" vertex="1">
+          <mxGeometry height="18" width="300" x="60" y="1304" as="geometry" />
+        </mxCell>
+        <mxCell id="lgCream" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#F0F0C0;strokeColor=#1A1B1C;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="14" width="22" x="360" y="1306" as="geometry" />
+        </mxCell>
+        <mxCell id="lgCreamT" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=14;fontColor=#1A1B1C;" value="config / API contract" vertex="1">
+          <mxGeometry height="18" width="240" x="388" y="1304" as="geometry" />
+        </mxCell>
+        <mxCell id="lgRose" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#F4D7D7;strokeColor=#1A1B1C;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="14" width="22" x="660" y="1306" as="geometry" />
+        </mxCell>
+        <mxCell id="lgRoseT" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=14;fontColor=#1A1B1C;" value="caveat / error handling" vertex="1">
+          <mxGeometry height="18" width="260" x="688" y="1304" as="geometry" />
+        </mxCell>
+        <mxCell id="lgPaper" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FCFCFC;strokeColor=#1A1B1C;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="14" width="22" x="980" y="1306" as="geometry" />
+        </mxCell>
+        <mxCell id="lgPaperT" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=14;fontColor=#1A1B1C;" value="external system / boundary" vertex="1">
+          <mxGeometry height="18" width="300" x="1008" y="1304" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSolid" edge="1" parent="1" style="edgeStyle=none;rounded=0;html=0;strokeColor=#1A1B1C;strokeWidth=1.5;endArrow=none;endFill=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="32" y="1339" as="sourcePoint" />
+            <mxPoint x="72" y="1339" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lgSolidT" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=14;fontColor=#1A1B1C;" value="runtime request / data flow" vertex="1">
+          <mxGeometry height="18" width="300" x="80" y="1330" as="geometry" />
+        </mxCell>
+        <mxCell id="lgDash" edge="1" parent="1" style="edgeStyle=none;rounded=0;html=0;strokeColor=#1A1B1C;strokeWidth=1.5;dashed=1;endArrow=none;endFill=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="400" y="1339" as="sourcePoint" />
+            <mxPoint x="440" y="1339" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lgDashT" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=left;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=14;fontColor=#1A1B1C;" value="config, test-scope, or build-time relationship" vertex="1">
+          <mxGeometry height="18" width="420" x="448" y="1330" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" style="edgeStyle=none;rounded=0;html=0;strokeColor=#1A1B1C;strokeWidth=1.5;endArrow=block;endFill=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="202" y="257" as="sourcePoint" />
+            <mxPoint x="300" y="257" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e1l" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=center;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=14;fontColor=#1A1B1C;" value="HTTP" vertex="1">
+          <mxGeometry height="18" width="56" x="223" y="225" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" style="edgeStyle=none;rounded=0;html=0;strokeColor=#1A1B1C;strokeWidth=1.5;endArrow=block;endFill=1;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="645" y="338" />
+              <mxPoint x="645" y="250" />
+            </Array>
+            <mxPoint x="620" y="338" as="sourcePoint" />
+            <mxPoint x="680" y="250" as="targetPoint" />
+            <mxPoint x="650" y="250" as="waypoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" style="edgeStyle=none;rounded=0;html=0;strokeColor=#1A1B1C;strokeWidth=1.5;endArrow=block;endFill=1;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1050" y="484" />
+              <mxPoint x="1050" y="244" />
+            </Array>
+            <mxPoint x="1020" y="484" as="sourcePoint" />
+            <mxPoint x="1080" y="244" as="targetPoint" />
+            <mxPoint x="1040" y="244" as="waypoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" style="edgeStyle=none;rounded=0;html=0;strokeColor=#1A1B1C;strokeWidth=1.5;endArrow=block;endFill=1;">
+          <mxGeometry relative="1" x="0.1767" as="geometry">
+            <Array as="points">
+              <mxPoint x="1310" y="641" />
+              <mxPoint x="460" y="641" />
+            </Array>
+            <mxPoint x="1310" y="364" as="sourcePoint" />
+            <mxPoint x="460" y="674" as="targetPoint" />
+            <mxPoint x="460" y="636" as="waypoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" style="edgeStyle=none;rounded=0;html=0;strokeColor=#1A1B1C;strokeWidth=1.5;endArrow=block;endFill=1;">
+          <mxGeometry relative="1" x="0.0943" as="geometry">
+            <Array as="points">
+              <mxPoint x="850" y="856" />
+              <mxPoint x="928" y="856" />
+            </Array>
+            <mxPoint x="850" y="880" as="sourcePoint" />
+            <mxPoint x="925" y="738" as="targetPoint" />
+            <mxPoint x="925" y="866" as="waypoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5l" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=center;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=14;fontColor=#1A1B1C;" value="JDBC" vertex="1">
+          <mxGeometry height="18" width="48" x="863" y="834" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="h2" style="edgeStyle=none;rounded=0;html=0;strokeColor=#1A1B1C;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;exitX=0.729;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="520" y="880" as="sourcePoint" />
+            <mxPoint x="585" y="738" as="targetPoint" />
+            <mxPoint x="585" y="866" as="waypoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e6l" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=center;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=14;fontColor=#1A1B1C;" value="test DB" vertex="1">
+          <mxGeometry height="18" width="64" x="520" y="834" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" style="edgeStyle=none;rounded=0;html=0;strokeColor=#1A1B1C;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;">
+          <mxGeometry relative="1" x="0.0057" as="geometry">
+            <Array as="points">
+              <mxPoint x="1190" y="858" />
+              <mxPoint x="1450" y="858" />
+            </Array>
+            <mxPoint x="1190" y="880" as="sourcePoint" />
+            <mxPoint x="1450" y="822" as="targetPoint" />
+            <mxPoint x="1450" y="866" as="waypoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e7l" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=center;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=14;fontColor=#1A1B1C;" value="exercises" vertex="1">
+          <mxGeometry height="18" width="76" x="1282" y="834" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" style="edgeStyle=none;rounded=0;html=0;strokeColor=#1A1B1C;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="152" y="338" />
+            </Array>
+            <mxPoint x="152" y="880" as="sourcePoint" />
+            <mxPoint x="300" y="338" as="targetPoint" />
+            <mxPoint x="152" y="338" as="waypoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e8l" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=center;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=14;fontColor=#1A1B1C;" value="config" vertex="1">
+          <mxGeometry height="26" width="56" x="199" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="e9l" parent="1" style="text;html=0;whiteSpace=wrap;overflow=hidden;align=center;verticalAlign=middle;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;fontSize=14;fontColor=#1A1B1C;" value="customer_id" vertex="1">
+          <mxGeometry height="18" width="84" x="1242" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="_UWQKrKwAX6pCP-SFzxY-6" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#66ABFF;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="Customer (entity)&#xa;id · name · email · jobTitle" vertex="1">
+          <mxGeometry height="56" width="191" x="1032" y="748" as="geometry" />
+        </mxCell>
+        <mxCell id="_UWQKrKwAX6pCP-SFzxY-7" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#66ABFF;strokeColor=#1A1B1C;strokeWidth=1.5;fontColor=#1A1B1C;fontSize=14;fontFamily=IBM Plex Sans,Helvetica Neue,Arial,sans-serif;align=center;verticalAlign=middle;spacing=6;" value="Interaction (entity)&#xa;id · remarks · interactionDate" vertex="1">
+          <mxGeometry height="56" width="210" x="1340" y="748" as="geometry" />
+        </mxCell>
+        <mxCell id="_UWQKrKwAX6pCP-SFzxY-8" edge="1" parent="1" source="_UWQKrKwAX6pCP-SFzxY-7" style="edgeStyle=none;rounded=0;html=0;strokeColor=#1A1B1C;strokeWidth=1.5;endArrow=block;endFill=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="_UWQKrKwAX6pCP-SFzxY-6">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1389" y="776" as="sourcePoint" />
+            <mxPoint x="1279" y="776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

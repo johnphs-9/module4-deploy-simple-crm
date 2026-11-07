@@ -107,10 +107,10 @@ public class CustomerControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    public void deleteCustomer_adminRole_returnsNoContent() throws Exception {
+    public void deleteCustomer_adminRole_returnsOk() throws Exception {
         Customer customer = customerRepository.save(new Customer("Bruce", "Banner"));
         mockMvc.perform(delete("/customers/" + customer.getId()))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 
     @Test
