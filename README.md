@@ -1,23 +1,19 @@
 # Module 4 Assignment — Dockerize & Deploy (Simple CRM API, Render)
 
-I completed Tasks 1–4 against my **Simple CRM API** (Stretch Option 3 backend) instead of TaskFlow, deployed on Render per the updated assignment requirements.
+I completed Tasks 1–4 using my **Simple CRM API** (Stretch Option 3 backend) instead of TaskFlow, deployed on Render per assignment requirements.
 
 ## Objective
 1. simple-crm-api is a Spring Boot 4.1.1 / Java 21 lesson build that **rolls up every lesson in Module 3** (excluding Spring AI), plus Assignments **3.19, 4.1 and 4.2** (unit and integration testing, secure software development & authentication, PT1 and PT2), built on top of the earlier `simple-crm` REST API.
 
 2. End of module assignment requirement is to dockerize & deploy to Render.
 
-## Backend - Deployed
+## Backend - deployed
 
 **API URL (Render)**: https://m4-assignment-simple-crm-api.onrender.com
 
 **GitHub**: https://github.com/johnphs-9/module4-deploy-simple-crm
 
 ![API Docker Deployed](docs/design/simple-crm-API-arch.png)
-
-**Health Check service at /health** (no authentication required)
-
-![Health check](docs/screenshots/health.png)
 
 ---
 
@@ -86,15 +82,13 @@ All three accounts can obtain a JWT at `POST /auth/login`
 | `DELETE` | `/customers/{id}` | Basic | ADMIN | 204 no body, 404 if not found | `curl -i -X DELETE $BASE/customers/5 -u admin:admin123` |
 | `POST` | `/customers/{id}/interactions` | Basic | ADMIN | 201 created interaction, 404 if customer missing | `curl -i -X POST $BASE/customers/1/interactions -u admin:admin123 -H 'Content-Type: application/json' -d '{"remarks":"Followed up on project requirements","interactionDate":"2026-11-01"}'` |
 
-- Unauthenticated requests → **401** with a `WWW-Authenticate: Basic realm="Realm"` challenge
-  header, so a plain browser URL pops Chrome/Firefox's native login dialog.
+- Unauthenticated requests → **401** with a `WWW-Authenticate: Basic realm="Realm"` challenge header → Chrome/Firefox pops up a native login dialog.
 
-- authenticated but not authorised (e.g. `user` posting to
-`/customers`) → **403**.
+- Authenticated but not authorised → **403**.
 
-### Prerequisites for manual testing
+### Database Data Refresh  
 
-- On startup the `dev` profile drops and recreates the tables 
+- On every service startup, the `dev` profile drops and recreates the tables 
 
 - `DataLoader` seeds four customers — **1 Tony Stark, 2 Bruce Banner, 3 Peter Parker, 4 Stephen Strange**
 (names only; no email/job title). IDs `1…4` below refer to this seed data and assume a fresh
@@ -124,5 +118,31 @@ Validation (enforced server-side, returns 400):
 ---
 
 ## Screenshots
-![Render dashboard](screenshots/render-dashboard.png)
-![Live API](screenshots/live-api.png)
+
+### Webservice and PostgreSQL deployed successfully
+
+- A successful `push main` to GitHub automatically triggers a docker build in Render.
+
+![Render dashboard](docs/screenshots/Render%20Web%20Service.png)
+
+- logs showing api web service and db started successfully, ready to serve requests.
+
+![Render service logs](docs/screenshots/Render%20webservice%20log.png)
+
+
+### Health Check service (no authentication required)
+
+![Health check](docs/screenshots/health.png)
+
+### Browser native login prompt
+
+![browser login](docs/screenshots/Browser%20native%20login%20prompt.png)
+
+### Live API 
+
+- `GET /customers`
+- browser supplies the collected credentials in the Basic authentication header
+
+![Live API](docs/screenshots/authenticated.png)
+
+
