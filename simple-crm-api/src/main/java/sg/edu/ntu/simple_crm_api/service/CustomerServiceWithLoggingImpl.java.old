@@ -1,0 +1,82 @@
+package sg.edu.ntu.simple_crm_api.service;
+
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import sg.edu.ntu.simple_crm_api.exceptions.CustomerNotFoundException;
+import sg.edu.ntu.simple_crm_api.model.Customer;
+import sg.edu.ntu.simple_crm_api.repository.CustomerRepositoryImpl;
+
+/**
+ * Implementation of the CustomerService interface with logging.
+ * Provides methods for creating, retrieving, updating, and deleting customers,
+ * with logging for each operation.
+ */
+@Service
+public class CustomerServiceWithLoggingImpl implements CustomerService {
+
+    private static final Logger logger = LoggerFactory.getLogger(CustomerServiceWithLoggingImpl.class);
+    private final CustomerRepositoryImpl customerRepository;
+
+    /**
+     * Constructs a customer service that logs operations on the supplied
+     * repository.
+     *
+     * @param customerRepository the repository used for customer-related operations
+     */
+    public CustomerServiceWithLoggingImpl(CustomerRepositoryImpl customerRepository) {
+        this.customerRepository = customerRepository;
+    }
+
+    @Override
+    public Customer createCustomer(Customer customer) {
+        logger.info("CustomerServiceWithLoggingImpl.createCustomer() called");
+        return customerRepository.createCustomer(customer);
+    }
+
+    @Override
+    public List<Customer> getAllCustomers() {
+        logger.info("CustomerServiceWithLoggingImpl.getAllCustomers() called");
+        return customerRepository.getAllCustomers();
+    }
+
+    @Override
+    public Customer getCustomer(Long id) {
+        logger.info("CustomerServiceWithLoggingImpl.getCustomer() called with id: {}", id);
+        return customerRepository.getCustomer(getCustomerIndex(id));
+    }
+
+    @Override
+    public Customer updateCustomer(Long id, Customer customer) {
+        logger.info("CustomerServiceWithLoggingImpl.updateCustomer() called with id: {}", id);
+        return customerRepository.updateCustomer(getCustomerIndex(id), customer);
+    }
+
+    @Override
+    public void deleteCustomer(Long id) {
+        logger.info("CustomerServiceWithLoggingImpl.deleteCustomer() called with id: {}", id);
+        customerRepository.deleteCustomer(getCustomerIndex(id));
+    }
+
+    /**
+     * Finds a customer's index in the repository and logs the lookup result.
+     *
+     * @param id the ID of the customer to locate
+     * @return the zero-based index of the matching customer
+     * @throws CustomerNotFoundException if no customer has the specified ID
+     */
+    private int getCustomerIndex(Long id) {
+        for (Customer customer : customerRepository.getAllCustomers()) {
+            if (customer.getId().equals(id)) {
+                int idx = customerRepository.getAllCustomers().indexOf(customer);
+                logger.info("CustomerServiceWithLoggingImpl.getCustomerIndex() found customer with id: " + id
+                        + ", at index: " + idx);
+                return idx;
+            }
+        }
+        logger.error("CustomerServiceWithLoggingImpl.getCustomerIndex() could not find customer with id: {}", id);
+        throw new CustomerNotFoundException(id);
+    }
+}

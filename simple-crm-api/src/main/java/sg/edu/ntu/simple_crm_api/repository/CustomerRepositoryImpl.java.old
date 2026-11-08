@@ -1,0 +1,92 @@
+package sg.edu.ntu.simple_crm_api.repository;
+
+import org.springframework.stereotype.Repository;
+import sg.edu.ntu.simple_crm_api.model.Customer;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Stores customers in an in-memory list and accesses them by zero-based index.
+ */
+@Repository
+public class CustomerRepositoryImpl implements CustomerRepository {
+
+    private List<Customer> customers = new ArrayList<>();
+
+    /**
+     * Initializes the repository with Bruce Banner, Peter Parker, Stephen Strange,
+     * and Steve Rogers.
+     */
+    public CustomerRepositoryImpl() {
+        customers.add(new Customer("Bruce", "Banner"));
+        customers.add(new Customer("Peter", "Parker"));
+        customers.add(new Customer("Stephen", "Strange"));
+        customers.add(new Customer("Steve", "Rogers"));
+    }
+
+    /**
+     * Appends the supplied customer to the backing list.
+     *
+     * @param customer the customer to store
+     * @return the supplied customer
+     */
+    public Customer createCustomer(Customer customer) {
+        customers.add(customer);
+        return customer;
+    }
+
+    /**
+     * Retrieves a customer by its position in the backing list.
+     *
+     * @param index the zero-based customer index
+     * @return the customer stored at the specified index
+     * @throws IndexOutOfBoundsException if the index is negative or not less than
+     *                                   the list size
+     */
+    public Customer getCustomer(int index) {
+        return customers.get(index);
+    }
+
+    /**
+     * Returns the mutable backing list of customers.
+     *
+     * @return the stored list, not a copy; changes to it affect the repository
+     */
+    public List<Customer> getAllCustomers() {
+        return customers;
+    }
+
+    /**
+     * Copies the supplied name, email, contact number, job title, and birth year
+     * into the stored customer, preserving its ID.
+     *
+     * @param index    the zero-based index of the customer to update
+     * @param customer the replacement field values; its ID is ignored, and omitted
+     *                 fields are not preserved
+     * @return the existing stored customer after updating its fields
+     * @throws IndexOutOfBoundsException if the index is negative or not less than
+     *                                   the list size
+     * @throws NullPointerException      if the supplied or stored customer is null
+     */
+    public Customer updateCustomer(int index, Customer customer) {
+        Customer customerToUpdate = customers.get(index);
+        customerToUpdate.setFirstName(customer.getFirstName());
+        customerToUpdate.setLastName(customer.getLastName());
+        customerToUpdate.setEmail(customer.getEmail());
+        customerToUpdate.setContactNo(customer.getContactNo());
+        customerToUpdate.setJobTitle(customer.getJobTitle());
+        customerToUpdate.setYearOfBirth(customer.getYearOfBirth());
+        return customerToUpdate;
+    }
+
+    /**
+     * Removes the customer at the specified position in the backing list.
+     *
+     * @param index the zero-based index of the customer to remove
+     * @throws IndexOutOfBoundsException if the index is negative or not less than
+     *                                   the list size
+     */
+    public void deleteCustomer(int index) {
+        customers.remove(index);
+    }
+}
