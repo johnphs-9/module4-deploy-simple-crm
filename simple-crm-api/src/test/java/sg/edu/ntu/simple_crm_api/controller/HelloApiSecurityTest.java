@@ -1,6 +1,7 @@
 package sg.edu.ntu.simple_crm_api.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -88,5 +89,29 @@ class HelloApiSecurityTest {
         String token = jwtService.generateToken("user");
         mockMvc.perform(get("/customers").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void errorPage_isPublic_soDeniedBearerRequestsKeepTheir403() throws Exception {
+        // Tomcat re-runs the filter chain on the ERROR dispatch to /error where
+        // the once-per-request Bearer filter no longer applies; if /error were
+        // secured, the entry point would rewrite a denied (403) Bearer response
+        // to 401. Boot's error page must therefore stay public (not 401).
+        int status = mockMvc.perform(get("/error")).andReturn().getResponse().getStatus();
+        org.junit.jupiter.api.Assertions.assertNotEquals(401, status,
+                "/error was rewritten to 401 — check the /error permitAll rule in SecurityConfig");
+    }
+
+    @Test
+    void apiBearer_adminToken_grantsAdminRights() throws Exception {
+        // Login now issues tokens for every configured account; JwtAuthFilter maps
+        // "admin" to ROLE_ADMIN, so a Bearer token can perform admin-only writes.
+        String token = jwtService.generateToken("admin");
+        mockMvc.perform(post("/customers")
+                .header("Authorization", "Bearer " + token)
+                .contentType("application/json")
+                .content("{\"firstName\":\"Diana\",\"lastName\":\"Prince\",\"email\":\"diana@prince.com\","
+                        + "\"contactNo\":\"87654321\",\"jobTitle\":\"Archivist\",\"yearOfBirth\":1985}"))
+                .andExpect(status().isCreated());
     }
 }

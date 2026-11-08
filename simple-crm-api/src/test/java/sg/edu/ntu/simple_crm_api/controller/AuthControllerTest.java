@@ -38,6 +38,18 @@ class AuthControllerTest {
     @Value("${app.auth.password}")
     private String password;
 
+    @Value("${app.auth.admin.username}")
+    private String adminUsername;
+
+    @Value("${app.auth.admin.password}")
+    private String adminPassword;
+
+    @Value("${app.auth.manager.username}")
+    private String managerUsername;
+
+    @Value("${app.auth.manager.password}")
+    private String managerPassword;
+
     @Test
     void login_validCredentials_returnsToken() throws Exception {
         String body = objectMapper.writeValueAsString(new LoginRequest(username, password));
@@ -47,6 +59,37 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.token").isNotEmpty())
                 .andReturn().getResponse().getContentAsString();
         assertTrue(json.split("\"").length > 3, "token field expected: " + json);
+    }
+
+    @Test
+    void login_adminCredentials_returnsToken() throws Exception {
+        String body = objectMapper.writeValueAsString(new LoginRequest(adminUsername, adminPassword));
+        String json = mockMvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").isNotEmpty())
+                .andReturn().getResponse().getContentAsString();
+        assertTrue(json.split("\"").length > 3, "token field expected: " + json);
+    }
+
+    @Test
+    void login_managerCredentials_returnsToken() throws Exception {
+        String body = objectMapper.writeValueAsString(new LoginRequest(managerUsername, managerPassword));
+        String json = mockMvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").isNotEmpty())
+                .andReturn().getResponse().getContentAsString();
+        assertTrue(json.split("\"").length > 3, "token field expected: " + json);
+    }
+
+    @Test
+    void login_validUsernameWithWrongPassword_returnsUnauthorized() throws Exception {
+        // admin's username is now a valid login account, but the password must match
+        String body = objectMapper.writeValueAsString(new LoginRequest(adminUsername, "not-the-password"));
+        mockMvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

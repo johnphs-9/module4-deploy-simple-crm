@@ -56,19 +56,20 @@ Base URL: `https://m4-assignment-simple-crm-api.onrender.com` (dev profile). The
 | **JWT Bearer** (Assignment 4.2) | `POST /auth/login` issues the token; `GET /api/**` requires it | `Authorization: Bearer <TOKEN>` header |
 | **HTTP Basic** (Assignment 4.1) | everything else (`/customers/**`, health) | `-u <user>:<pass>` — curl flag or `Authorization: Basic ...` header |
 
-In-memory users: `user`/`user123` → `ROLE_USER`, `admin`/`admin123` → `ROLE_ADMIN`.
-`POST /auth/login` instead checks the credentials configured via `app.auth.username` /
-`app.auth.password` in `.env` (assignment defaults `user`/`password`) — note these are
-**independent** of the Basic-auth users above.
+In-memory users: `user`/`user123` → `ROLE_USER`, `manager`/`manager123` → `ROLE_MANAGER`,
+`admin`/`admin123` → `ROLE_ADMIN`. All three accounts can obtain a JWT at `POST /auth/login`
+(credentials configured via `app.auth.*` in `.env`); the token carries no role claim —
+`JwtAuthFilter` maps the subject to the RBAC role above, so an admin Bearer token can
+call the ADMIN-only endpoints too. HTTP Basic remains available on `/customers/**`.
 
 ### Endpoint summary
 
 | Method | Path | Auth | Roles | Success | Notes |
 |--------|------|------|-------|---------|-------|
-| `GET` | `/health` | **none (public)** | — | 200 `{"status":"UP"}` | liveness probe |
-| `POST` | `/auth/login` | **none (public)** | — | 200 `{"token":"…"}` | 401 on bad/missing credentials |
-| `GET` | `/api/hello` | JWT | any authenticated | 200 plain string | PT2 protected endpoint |
-| `GET` | `/customers` | Basic | USER, ADMIN | 200 JSON array | |
+| `GET` | `/health` | **none (public)** | — | 200 `{"status":"UP"}` | `curl $BASE/health` |
+| `POST` | `/auth/login` | **none (public)** | — | 200 `{"token":"…"}`, 401 on bad/missing credentials |  |
+| `GET` | `/api/hello` | JWT | USER | 200 plain string | `curl -X POST $BASE/auth/login -H 'Content-Type: application/json' -d '{"username":"user", "password":"user123"}'` |
+| `GET` | `/customers` | Basic | USER, ADMIN | 200 JSON array | `curl $BASE/customers -u user:user123` |
 | `GET` | `/customers/{id}` | Basic | USER, ADMIN | 200 | 404 if not found |
 | `GET` | `/customers/search?firstName=…` | Basic | USER, ADMIN | 200 JSON array | exact-match on first name |
 | `GET` | `/customers/search/job?jobTitle=…` | Basic | USER, ADMIN | 200 JSON array | JPQL exact-match on job title |
@@ -136,11 +137,14 @@ curl $BASE/health
 
 ### 2. `POST /auth/login` — obtain a JWT
 
+Any configured account can log in (`user`/`user123`, `manager`/`manager123`,
+`admin`/`admin123`); the returned Bearer token inherits the account's role.
+
 ```bash
 curl -i -X POST $BASE/auth/login \
   -H 'Content-Type: application/json' \
-  -d '{"username":"user","password":"user123"}'
-# → 200, body: {"token":"<signed HS256 JWT>"}
+  -d '{"username":"admin","password":"admin123"}'
+# → 200, body: {"token":"<signed HS256 JWT subject=admin>"}
 ```
 
 Negative cases:

@@ -15,7 +15,7 @@ services:
 
   api:
     build: .
-    image: m4-deploy-simple-crm-api:1.0.0
+    image: m4-deploy-simple-crm-api:1.0.1
     restart: unless-stopped   # retries while Postgres is still starting up
     depends_on:
       db:

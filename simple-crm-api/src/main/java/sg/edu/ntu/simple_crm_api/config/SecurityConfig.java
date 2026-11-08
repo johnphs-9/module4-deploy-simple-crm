@@ -54,6 +54,11 @@ public class SecurityConfig {
                                                 .requestMatchers("/auth/login").permitAll() // L43
                                                 .requestMatchers("/api/**").authenticated() // L44
                                                 .requestMatchers("/health").permitAll() // pt1 R11
+                                                // Allow Tomcat's internal ERROR dispatch to /error — the
+                                                // Bearer-auth filter is OncePerRequestFilter, so the nested
+                                                // error request loses its context; without this the 403
+                                                // from a denied Bearer request is rewritten to 401.
+                                                .requestMatchers("/error").permitAll()
                                                 .requestMatchers(HttpMethod.POST, "/customers/**").hasRole("ADMIN") // pt1
                                                                                                                     // R12
                                                 .requestMatchers(HttpMethod.PUT, "/customers/**")
