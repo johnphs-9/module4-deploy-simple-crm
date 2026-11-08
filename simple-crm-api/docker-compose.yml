@@ -11,7 +11,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5433:5432"      # remapped host 5433 -> container 5432 (avoids clash with local Postgres)
+      - "5432:5432"      # using default host port 5432  
 
   api:
     build: .
