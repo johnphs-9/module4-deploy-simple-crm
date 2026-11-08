@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,7 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import sg.edu.ntu.simple_crm_api.security.JwtAuthFilter;
@@ -31,7 +29,7 @@ import sg.edu.ntu.simple_crm_api.security.JwtService;
  * <li><b>JWT Bearer</b> (pt2): issued at {@code POST /auth/login}, enforced on
  * {@code /api/**}.</li>
  * </ul>
- * Unauthenticated requests → 401 (HttpStatusEntryPoint); authenticated but
+ * Unauthenticated requests → 401 with a Basic WWW-Authenticate challenge; authenticated but
  * unauthorized → 403.
  */
 @Configuration
@@ -68,8 +66,11 @@ public class SecurityConfig {
                                                 .requestMatchers(HttpMethod.GET, "/customers/**").authenticated() // pt1
                                                                                                                   // R14
                                                 .anyRequest().authenticated())
-                                .exceptionHandling(ex -> ex.authenticationEntryPoint(
-                                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                                // No custom entry point: with httpBasic(Customizer.withDefaults()),
+                                // Spring Security's default BasicAuthenticationEntryPoint answers
+                                // unauthenticated requests with 401 **plus** a
+                                // "WWW-Authenticate: Basic" challenge so browsers (which ignore
+                                // user:pass@ URLs since Chrome 59) show their native login dialog.
                                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // L45
                                 .httpBasic(Customizer.withDefaults()); // pt1 R10 — kept (D3)
                 return http.build();

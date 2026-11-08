@@ -1,8 +1,10 @@
 package sg.edu.ntu.simple_crm_api.controller;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.StandardCharsets;
@@ -44,6 +46,17 @@ class HelloApiSecurityTest {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Test
+    void unauthenticatedRequest_returns401WithBasicChallenge() throws Exception {
+        // Regression for browser access: the 401 must carry a
+        // WWW-Authenticate: Basic response header so Chrome's native login
+        // dialog appears on a plain URL (URL-embedded creds are ignored since
+        // Chrome 59).
+        mockMvc.perform(get("/customers"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(header().string("WWW-Authenticate", containsString("Basic")));
+    }
 
     @Test
     void apiHello_withoutToken_returnsUnauthorized() throws Exception {
