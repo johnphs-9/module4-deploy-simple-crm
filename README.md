@@ -121,16 +121,19 @@ Validation (enforced server-side, returns 400):
 
 ## Screenshots
 
+### Render Dashboard
+
+![Render dashboard](docs/screenshots/Render%20Project%20.png)
+
 ### Webservice and PostgreSQL deployed successfully
 
 - A successful `push main` to GitHub automatically triggers a docker build in Render.
 
 ![Render dashboard](docs/screenshots/Render%20Web%20Service.png)
 
-- logs showing simple-crm-api serving requests and performing CRUD operations on the database.
+- logs showing simple-crm-api deployed successfully and serving requests - performing CRUD operations on the database.
 
 ![Render service logs](docs/screenshots/Render%20webservice%20log.png)
-
 
 ### Health Check service (no authentication required)
 
@@ -138,13 +141,34 @@ Validation (enforced server-side, returns 400):
 
 ### Browser native login prompt
 
+- When a protected endpoint is requested without valid credentials, the API returns a 401 Unauthorized response with a Basic authentication challenge. 
+- The browser then displays its native login prompt.
+
 ![browser login](docs/screenshots/Browser%20native%20login%20prompt.png)
 
 ### Live API 
 
 - Endpoint: [GET /customers](https://m4-assignment-simple-crm-api.onrender.com/customers)
-- browser supplies the collected credentials in an `Authorization: Basic` header on subsequent requests.
+- Browser then supplies the previously collected credentials in an `Authorization: Basic` header on subsequent requests.
 
-![Live API](docs/screenshots/authenticated.png)
+![Live API](docs/screenshots/Get_customers_authenticated.png)
 
+### Service waking 
 
+- Render will spin down instances for free tier accounts after a period of inactivity (~15 minutes).    
+
+- Render automatically restarts the service upon incoming requests. The entire waking up process may take up to 2 minutes as both web and database services are brought up. 
+
+![Render service waking](docs/screenshots/Render_service_waking.png)
+
+- Logs showing service successfully brought up. 
+
+![Render service waking logs](docs/screenshots/Render_service_wake_logs.png)
+
+- Response from API as expected after service running again.
+
+![Request served after service awake](docs/screenshots/Get_awake_result.png)
+
+- Database data remains persisted across service restarts.
+
+![Data persistence after waking](docs/screenshots/Get_awake_data_persistence.png)
