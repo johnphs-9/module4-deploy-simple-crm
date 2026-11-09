@@ -154,12 +154,14 @@ public class CustomerController {
     @GetMapping("/search")
     public ResponseEntity<List<Customer>> searchCustomers(@RequestParam String firstName) {
         List<Customer> foundCustomers = customerService.searchCustomers(firstName);
+        logger.info("Search firstName: " + firstName + ". Found: " + foundCustomers.size());
         return new ResponseEntity<>(foundCustomers, HttpStatus.OK);
     }
 
     @GetMapping("/search/job")
     public ResponseEntity<List<Customer>> searchCustomersByJobTitle(@RequestParam String jobTitle) {
         List<Customer> foundCustomers = customerService.searchCustomersByJobTitle(jobTitle);
+        logger.info("Search jobTitle: " + jobTitle + ". Found: " + foundCustomers.size());
         return new ResponseEntity<>(foundCustomers, HttpStatus.OK);
     }
 
