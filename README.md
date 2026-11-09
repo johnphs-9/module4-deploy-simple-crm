@@ -88,11 +88,13 @@ All three accounts can obtain a JWT at `POST /auth/login`
 
 ### Database Data Refresh  
 
-- On every service startup, the `dev` profile drops and recreates the tables 
+- The `dev` profile is set for update. Tables and data are persistent across service restarts. 
 
-- `DataLoader` seeds four customers — **1 Tony Stark, 2 Bruce Banner, 3 Peter Parker, 4 Stephen Strange**
-(names only; no email/job title). IDs `1…4` below refer to this seed data and assume a fresh
-run. 
+- `DataLoader` seeds four customers at service startup if customer repository is empty — **1 Tony Stark, 2 Bruce Banner, 3 Peter Parker, 4 Stephen Strange**
+(names only; no email/job title). 
+
+(these are  sample customer IDs; they are not guaranteed to be 1..4 in sequence when seeding an empty table in an existing database)
+
 
 
 ### Customer JSON shape

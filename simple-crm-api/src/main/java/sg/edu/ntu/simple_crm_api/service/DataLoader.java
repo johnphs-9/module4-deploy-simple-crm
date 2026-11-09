@@ -17,13 +17,11 @@ public class DataLoader {
 
     @PostConstruct
     public void loadData() {
-        // Clear the database first
-        customerRepository.deleteAll();
-
-        // Load seed data
-        customerRepository.save(new Customer("Tony", "Stark"));
-        customerRepository.save(new Customer("Bruce", "Banner"));
-        customerRepository.save(new Customer("Peter", "Parker"));
-        customerRepository.save(new Customer("Stephen", "Strange"));
+        if (customerRepository.count() == 0) {
+            customerRepository.save(new Customer("Tony", "Stark"));
+            customerRepository.save(new Customer("Bruce", "Banner"));
+            customerRepository.save(new Customer("Peter", "Parker"));
+            customerRepository.save(new Customer("Stephen", "Strange"));
+        }
     }
 }
