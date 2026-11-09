@@ -127,7 +127,7 @@ Validation (enforced server-side, returns 400):
 
 ![Render dashboard](docs/screenshots/Render%20Web%20Service.png)
 
-- logs showing api web service and db started successfully, ready to serve requests.
+- logs showing simple-crm-api serving requests and performing CRUD operations on the database.
 
 ![Render service logs](docs/screenshots/Render%20webservice%20log.png)
 
@@ -142,8 +142,8 @@ Validation (enforced server-side, returns 400):
 
 ### Live API 
 
-- `GET /customers`
-- browser supplies the collected credentials in the Basic authentication header
+- Endpoint: [GET /customers](https://m4-assignment-simple-crm-api.onrender.com/customers)
+- browser supplies the collected credentials in an `Authorization: Basic` header on subsequent requests.
 
 ![Live API](docs/screenshots/authenticated.png)
 
