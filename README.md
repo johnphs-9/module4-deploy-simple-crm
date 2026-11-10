@@ -2,12 +2,18 @@
 
 I completed Tasks 1–4 using my **Simple CRM API** (Stretch Option 3 backend) instead of TaskFlow, deployed on Render per assignment requirements.
 
-## Objective
-1. simple-crm-api is a Spring Boot 4.1.1 / Java 21 lesson build that **rolls up every lesson in Module 3** (excluding Spring AI), plus Assignments **3.19, 4.1 and 4.2** (unit and integration testing, secure software development & authentication, PT1 and PT2), built on top of the earlier `simple-crm` REST API.
+## Submission scope
 
-2. End of module assignment requirement is to dockerize & deploy to Render.
+| Area | Scope | Status |
+| --- | --- | --- |
+| Simple CRM API | Spring Boot / Java API combining all Module 3 lessons (excluding Spring AI), 4.1 and 4.2. | ✅ Baseline |
+| Earlier assignments | Assignments `3.19 - unit and integration testing`, `4.1 - secure software development & authentication Pt 1` and `4.2 - secure software development & authentication Pt2` are rolled into the API. | ✅ Baseline |
+| Module 4 assignment | **Tasks 1–4**: create a Dockerfile, build and test locally, deploy, and verify the deployment using the Simple CRM API instead of TaskFlow. **Deployed on Render**.| ✅ Baseline |
+| Stretch Option 1 — Add a CI Pipeline | Build, test and publish the API image to Docker Hub using GitHub Actions, alongside the Render deployment. | 🚧 WIP |
+| Stretch Option 3 — Use your Simple CRM project | Containerized and deployed the API with PostgreSQL. The React frontend deployment and integration are not included. | ✅ Partial (no Simple CRM frontend) |
+| Stretch Option 4 —  Publish Versioned Docker Images | Use version or commit-SHA tags alongside `latest`. The planned CI pipeline adds commit-SHA tags; this option also requires at least two published versions and a Docker Hub tags screenshot. | 🚧 WIP |
 
-## Backend - deployed
+## Backend Deployed
 
 **API URL (Render)**: https://m4-assignment-simple-crm-api.onrender.com
 
@@ -17,7 +23,32 @@ I completed Tasks 1–4 using my **Simple CRM API** (Stretch Option 3 backend) i
 
 ---
 
-## Spring Security 
+## Stretch Option 1 — add a CI pipeline to Docker Hub (GitHub Actions)
+
+For assignment **Stretch Option 1**, this branch configures a GitHub Actions CI pipeline (`.github/workflows/docker.yml`) to run on **every push to `main`** so that a **CI pipeline** to Docker Hub and the Render **deployment** pipeline can work side by side. 
+
+| Pipeline | Trigger | What it does |
+| --- | --- | --- |
+| **CI pipeline** (GitHub Actions) | push to `main` | Builds with Maven → runs all unit & integration tests (H2 in-memory, no DB needed in CI) → on test success builds the Docker image (`simple-crm-api/` context) and pushes it to Docker Hub |
+| **Deployment pipeline** (Render) | push to `main` | Builds the Dockerfile and deploys the web service on Render |
+
+### Pipeline design
+
+- **Job 1 — `test`:** `actions/checkout` → `actions/setup-java` (Temurin 21, Maven cache) → `./mvnw -B clean install` (tests use the `test` profile backed by an H2 in-memory database).
+- **Job 2 — `publish`:** runs **only if tests pass** (`needs: test`) → `docker/login-action` authenticated with GitHub repository **secrets** `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` → `docker/build-push-action` with `context: simple-crm-api` and `push: true`.
+- **Docker Hub credentials are stored as GitHub repository secrets — never committed to code** (assignment requirement verified: `git ls-files` contains no tokens or passwords).
+- **Image tags configured for each successful publish:**
+  - `johnphs9/module4-deploy-simple-crm:latest` — always points at the newest passing build,
+  - `johnphs9/module4-deploy-simple-crm:g<short-SHA>` — one immutable tag per commit for traceability/rollback.
+
+### Links
+
+- Successful pipeline run: **<to be added after first run — GitHub Actions run link>**
+- Image on Docker Hub: <https://hub.docker.com/r/johnphs9/module4-deploy-simple-crm/tags>
+
+---
+
+## Spring Security for Simple CRM API 
 
 ### Authentication and Authorisation (RBAC)
 
@@ -56,13 +87,13 @@ The app uses **two complementary auth mechanisms**:
 
 | Mechanism | Where it applies | How to authenticate |
 |-----------|------------------|---------------------|
-| **JWT Bearer** (Assignment 4.2) | `POST /auth/login` issues the token; `GET /api/**` requires it | `Authorization: Bearer <TOKEN>` header |
 | **HTTP Basic** (Assignment 4.1) | everything else (`/customers/**`, health) | `-u <user>:<pass>` — curl flag or `Authorization: Basic ...` header |
+| **JWT Bearer** (Assignment 4.2) | `POST /auth/login` issues the token; `GET /api/**` requires it | `Authorization: Bearer <TOKEN>` header |
 
 **In-memory users**: 
-- `user`/`user123` → `ROLE_USER`
--  `manager`/`manager123` → `ROLE_MANAGER`
-- `admin`/`admin123` → `ROLE_ADMIN`
+- `user` → `ROLE_USER`
+- `manager` → `ROLE_MANAGER`
+- `admin` → `ROLE_ADMIN`
 
 All three accounts can obtain a JWT at `POST /auth/login`
 
@@ -86,16 +117,13 @@ All three accounts can obtain a JWT at `POST /auth/login`
 
 - Authenticated but not authorised → **403**.
 
-### Database Data Refresh  
+### Data Refresh Logic
 
-- The `dev` profile is set for update. Tables and data are persistent across service restarts. 
+- The `dev` profile is set for update (`spring.jpa.hibernate.ddl-auto=update`). Tables and data are persistent across deployments and restarts. 
 
-- `DataLoader` seeds four customers at service startup if customer repository is empty — **1 Tony Stark, 2 Bruce Banner, 3 Peter Parker, 4 Stephen Strange**
-(names only; no email/job title). 
+- `DataLoader` seeds four customers at service startup only if customer repository is empty — **Tony Stark, Bruce Banner, Peter Parker, Stephen Strange** (names only; no email/job title). 
 
-(these are  sample customer IDs; they are not guaranteed to be 1..4 in sequence when seeding an empty table in an existing database)
-
-
+**Note**: customer ID sequence is not guaranteed when seeding an empty table in an existing database.
 
 ### Customer JSON shape
 

@@ -35,8 +35,8 @@ build/
 !.vscode/extensions.json
 
 ### Github ###
-.github/
-.github/*
+# commit GitHub Actions workflows, keep editor instructions files out
+.github/instructions/
 
 
 ### Editor directories and files
