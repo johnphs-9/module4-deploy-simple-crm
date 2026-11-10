@@ -1,7 +1,7 @@
 # Stretch Option 1 + Stretch Option 4: CI pipeline to Docker Hub with SemVer + SHA tags
 # Builds, tests and publishes the Simple CRM API image on every push to main.
 # Tags published: latest (newest passing build), <MAJOR.MINOR.PATCH> (from VERSION file),
-# and g<short-SHA> (immutable per-commit build, for traceability/rollback).
+# and sha-<short-SHA> (immutable per-commit build, for traceability/rollback).
 # Runs side by side with the Render deployment pipeline (which builds from the Dockerfile on push).
 # Docker Hub credentials are provided as repository secrets — never committed to code.
 
@@ -89,4 +89,4 @@ jobs:
           tags: |
             johnphs9/module4-deploy-simple-crm:latest
             johnphs9/module4-deploy-simple-crm:${{ steps.ver.outputs.semver }}
-            johnphs9/module4-deploy-simple-crm:g${{ steps.sha.outputs.short }}
+            johnphs9/module4-deploy-simple-crm:sha-${{ steps.sha.outputs.short }}

@@ -11,7 +11,7 @@ I completed Tasks 1–4 (_"Baseline"_) using my **Simple CRM API** (Stretch Opti
 | Module 4 assignment | **Tasks 1–4**: create a Dockerfile, build and test locally, deploy, and verify the deployment using the Simple CRM API instead of TaskFlow. **Deployed on Render**.| ✅ Baseline |
 | Stretch Option 1 — Add a CI Pipeline | Build, test and publish the API image to Docker Hub using GitHub Actions, alongside the Render deployment. | ✅ Complete |
 | Stretch Option 3 — Use your Simple CRM project | Containerized and deployed the API with PostgreSQL. The React frontend deployment and integration are not included. | ✅ Partial (no Simple CRM frontend) |
-| Stretch Option 4 — Publish Versioned Docker Images | SemVer (`MAJOR.MINOR.PATCH`) release tags sourced from the root `VERSION` file, immutable `g<short-SHA>` tags, and `latest` always pointing at the newest build — published to Docker Hub with the tags-page screenshot below. | ✅ Complete |
+| Stretch Option 4 — Publish Versioned Docker Images | SemVer (`MAJOR.MINOR.PATCH`) release tags sourced from the root `VERSION` file, immutable `sha-<short-SHA>` tags, and `latest` always pointing at the newest build — published to Docker Hub with the tags-page screenshot below. | ✅ Complete |
 
 ## Backend Deployed
 
@@ -44,7 +44,7 @@ A GitHub Actions CI pipeline (`.github/workflows/docker.yml`) to run on **every 
 
 - **Image tags configured for each successful publish:**
   - `johnphs9/module4-deploy-simple-crm:latest` — always points at the newest passing build,
-  - `johnphs9/module4-deploy-simple-crm:g<short-SHA>` — one immutable tag per commit for traceability/rollback.
+  - `johnphs9/module4-deploy-simple-crm:sha-<short-SHA>` — one immutable tag per commit for traceability/rollback.
 
 ### Verification
 
@@ -63,19 +63,23 @@ Images are published with **Semantic Versioning (MAJOR.MINOR.PATCH, Lesson 4.5)*
 | Tag | Meaning | Rule |
 | --- | --- | --- |
 | `MAJOR.MINOR.PATCH` (e.g. `1.1.0`) | Release version | Source of truth = the `VERSION` file at the repo root; a **MINOR** bump marks a new feature, a **PATCH** bump a fix/docs change, a **MAJOR** bump a breaking change |
-| `g<short-SHA>` (e.g. `gdfbc582`) | Immutable build pointer | One per commit, never moved — used for traceability and rollback |
+| `sha-<short-SHA>` (e.g. `sha-281b303`) | Immutable build pointer | One per commit, never moved — used for traceability and rollback |
 | `latest` | Newest passing build | Always points at the image built from the most recent successful `main` push |
 
 How the CI enforces it (`.github/workflows/docker.yml`):
 - The `publish` job reads the first `MAJOR.MINOR.PATCH` line from the root `VERSION` file and tags the image with it.
 - If `VERSION` is missing or malformed the pipeline **fails** with an error — no unversioned image can ever be published by accident.
-- Each push to `main` therefore publishes three tags: `latest` (moving), `<version>` (release) and `g<short-SHA>` (immutable).
+- Each push to `main` therefore publishes three tags: `latest` (moving), `<version>` (release) and `sha-<short-SHA>` (immutable).
+
+- Tag-convention note: builds pushed before this prefix was standardised keep their legacy `g<short-SHA>` names (`ge82266a`, `gae2bd82`, `gdfbc582`, `g281b303`) — same meaning (immutable per-commit pointer), older format.
+
+Per-version change details: [CHANGELOG.md](CHANGELOG.md).
 
 ### Version history
 
 | Version | What changed | How it was published |
 | --- | --- | --- |
-| `1.0.1` | JPWT login fix — all three accounts can obtain a JWT | Local build only (pre-Docker Hub) |
+| `1.0.1` | JWT login fix — all three accounts can obtain a JWT | Local build only (pre-Docker Hub) |
 | `1.0.2` | `BasicAuthenticationEntryPoint` fix — browser shows native login prompt | Local build → pushed manually |
 | `1.0.3` | Customer data preserved across service restarts | Local build → pushed manually |
 | `1.0.4` | Stretch Option 1 complete: CI pipeline to Docker Hub | CI build `gdfbc582` retagged as `1.0.4` on Docker Hub |
