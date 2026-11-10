@@ -11,7 +11,7 @@ I completed Tasks 1–4 (_"Baseline"_) using my **Simple CRM API** (Stretch Opti
 | Module 4 assignment | **Tasks 1–4**: create a Dockerfile, build and test locally, deploy, and verify the deployment using the Simple CRM API instead of TaskFlow. **Deployed on Render**.| ✅ Baseline |
 | Stretch Option 1 — Add a CI Pipeline | Build, test and publish the API image to Docker Hub using GitHub Actions, alongside the Render deployment. | ✅ Complete |
 | Stretch Option 3 — Use your Simple CRM project | Containerized and deployed the API with PostgreSQL. The React frontend deployment and integration are not included. | ✅ Partial (no Simple CRM frontend) |
-| Stretch Option 4 —  Publish Versioned Docker Images | Use version or commit-SHA tags alongside `latest`. The planned CI pipeline adds commit-SHA tags; this option also requires at least two published versions and a Docker Hub tags screenshot. | 🚧 WIP |
+| Stretch Option 4 — Publish Versioned Docker Images | SemVer (`MAJOR.MINOR.PATCH`) release tags sourced from the root `VERSION` file, immutable `g<short-SHA>` tags, and `latest` always pointing at the newest build — published to Docker Hub with the tags-page screenshot below. | ✅ Complete |
 
 ## Backend Deployed
 
@@ -86,7 +86,7 @@ How the CI enforces it (`.github/workflows/docker.yml`):
 ### Verification
 
 - Docker Hub tags (live): <https://hub.docker.com/r/johnphs9/module4-deploy-simple-crm/tags>
-- Successful CI run publishing `1.1.0`: <https://github.com/johnphs-9/module4-deploy-simple-crm/actions> _(filled in after the first versioned run)_
+- Successful CI run publishing `1.1.0` + `latest` + `g281b303`: [#42811181947](<https://github.com/johnphs-9/module4-deploy-simple-crm/actions/runs/42811181947>)
 
 ![Docker Hub version tags](docs/screenshots/Docker-Hub-tags.png)
 
