@@ -1,0 +1,10 @@
+# Simple CRM API — semantic version (MAJOR.MINOR.PATCH, Lesson 4.5)
+# Single source of truth for Docker image versioning in .github/workflows/docker.yml.
+# CI reads the first MAJOR.MINOR.PATCH line found in this file and tags the image
+# johnphs9/module4-deploy-simple-crm:<version> on every push to main.
+#
+# Bump rules:
+#   MAJOR — breaking API/auth contract changes
+#   MINOR — new features (e.g. 1.1.0 = SemVer image tagging added to the CI pipeline)
+#   PATCH — bug fixes, docs, logging tweaks
+1.1.0
