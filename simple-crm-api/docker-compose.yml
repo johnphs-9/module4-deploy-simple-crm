@@ -24,7 +24,7 @@ services:
   api:
     build: 
       context: .
-    image: m4-deploy-simple-crm-api:1.0.4
+    image: simple-crm-api:local   # local-compose build only; releases are tagged by CI from VERSION
     container_name: m4-deploy-simple-crm-api
     ports:
       - "8080:8080"

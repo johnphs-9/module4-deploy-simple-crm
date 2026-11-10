@@ -11,17 +11,20 @@ I completed Tasks 1–4 (_"Baseline"_) using my **Simple CRM API** (Stretch Opti
 | Module 4 assignment | **Tasks 1–4**: create a Dockerfile, build and test locally, deploy, and verify the deployment using the Simple CRM API instead of TaskFlow. **Deployed on Render**.| ✅ Baseline |
 | Stretch Option 1 — Add a CI Pipeline | Build, test and publish the API image to Docker Hub using GitHub Actions, alongside the Render deployment. | ✅ Complete |
 | Stretch Option 3 — Use your Simple CRM project | Containerized and deployed the API with PostgreSQL. The React frontend deployment and integration are not included. | ✅ Partial (no Simple CRM frontend) |
-| Stretch Option 4 — Publish Versioned Docker Images | SemVer (`MAJOR.MINOR.PATCH`) release tags sourced from the root `VERSION` file, immutable `sha-<short-SHA>` tags, and `latest` always pointing at the newest build — published to Docker Hub with the tags-page screenshot below. | ✅ Complete |
+| Stretch Option 4 — Publish Versioned Docker Images | SemVer (`MAJOR.MINOR.PATCH`) release tags sourced from the root `VERSION` file, `sha-<short-SHA>` tags corresponding to Git commit id, and `latest` always pointing at the newest build — published to Docker Hub with the tags-page screenshot below. | ✅ Complete |
 
 ## Backend Deployed
 
-**API URL (Render)**: https://m4-assignment-simple-crm-api.onrender.com
+| --- | ---: |
+| **GitHub**           | https://github.com/johnphs-9/module4-deploy-simple-crm                              |
+| **API URL (Render)** | https://m4-assignment-simple-crm-api.onrender.com                                   |
+| **Docker Hub**       | https://hub.docker.com/repository/docker/johnphs9/module4-deploy-simple-crm/general |
 
-**GitHub**: https://github.com/johnphs-9/module4-deploy-simple-crm
+ 
 
 ### Simple CRM API architecture
 
-![API Docker Deployed](docs/design/simple-crm-API-arch_S1.png)
+![API Docker Deployed](docs/design/simple-crm-API-arch_S4.png)
 
 ---
 
@@ -44,7 +47,7 @@ A GitHub Actions CI pipeline (`.github/workflows/docker.yml`) to run on **every 
 
 - **Image tags configured for each successful publish:**
   - `johnphs9/module4-deploy-simple-crm:latest` — always points at the newest passing build,
-  - `johnphs9/module4-deploy-simple-crm:sha-<short-SHA>` — one immutable tag per commit for traceability/rollback.
+  - `johnphs9/module4-deploy-simple-crm:sha-<short-SHA>` — one immutable tag per commit for traceability/rollback (references Git commit id)
 
 ### Verification
 
@@ -56,7 +59,9 @@ A GitHub Actions CI pipeline (`.github/workflows/docker.yml`) to run on **every 
 
 ## Stretch Option 4 — publish versioned Docker images (SemVer + Git SHA)
 
-Images are published with **Semantic Versioning (MAJOR.MINOR.PATCH, Lesson 4.5)** instead of only `latest`, plus the immutable commit-SHA tag already introduced in Option 1. All tags live on <https://hub.docker.com/r/johnphs9/module4-deploy-simple-crm/tags>.
+Images are published with **Semantic Versioning (MAJOR.MINOR.PATCH, Lesson 4.5)** instead of only `latest`, plus the Git commit-SHA tag already introduced in Option 1. 
+
+All tags live on <https://hub.docker.com/r/johnphs9/module4-deploy-simple-crm/tags>.
 
 ### Versioning scheme
 
@@ -90,7 +95,8 @@ Per-version change details: [CHANGELOG.md](CHANGELOG.md).
 ### Verification
 
 - Docker Hub tags (live): <https://hub.docker.com/r/johnphs9/module4-deploy-simple-crm/tags>
-- Successful CI run publishing `1.1.0` + `latest` + `g281b303`: [#42811181947](<https://github.com/johnphs-9/module4-deploy-simple-crm/actions/runs/42811181947>)
+- CI run publishing the first versioned release `1.1.0` + `latest` + `g281b303`: [#42811181947](<https://github.com/johnphs-9/module4-deploy-simple-crm/actions/runs/42811181947>)
+- CI run publishing under the standardised `sha-<short-SHA>` convention (`sha-757a984`): [#42825704863](<https://github.com/johnphs-9/module4-deploy-simple-crm/actions/runs/42825704863>)
 
 ![Docker Hub version tags](docs/screenshots/Docker-Hub-tags.png)
 
