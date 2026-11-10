@@ -71,7 +71,7 @@ How the CI enforces it (`.github/workflows/docker.yml`):
 - If `VERSION` is missing or malformed the pipeline **fails** with an error — no unversioned image can ever be published by accident.
 - Each push to `main` therefore publishes three tags: `latest` (moving), `<version>` (release) and `sha-<short-SHA>` (immutable).
 
-- Tag-convention note: builds pushed before this prefix was standardised keep their legacy `g<short-SHA>` names (`ge82266a`, `gae2bd82`, `gdfbc582`, `g281b303`) — same meaning (immutable per-commit pointer), older format.
+- Tag-convention note: builds pushed before this prefix was standardised keep their legacy `g<short-SHA>` names (e.g. `g281b303`) — same meaning (immutable per-commit pointer), older format.
 
 Per-version change details: [CHANGELOG.md](CHANGELOG.md).
 
