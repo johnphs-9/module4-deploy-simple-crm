@@ -1,6 +1,6 @@
 # Module 4 Assignment — Dockerize & Deploy (Simple CRM API, Render)
 
-I completed Tasks 1–4 using my **Simple CRM API** (Stretch Option 3 backend) instead of TaskFlow, deployed on Render per assignment requirements.
+I completed Tasks 1–4 (_"Baseline"_) using my **Simple CRM API** (Stretch Option 3 backend) instead of TaskFlow, deployed on Render as allowed for free accounts.
 
 ## Submission scope
 
@@ -9,7 +9,7 @@ I completed Tasks 1–4 using my **Simple CRM API** (Stretch Option 3 backend) i
 | Simple CRM API | Spring Boot / Java API combining all Module 3 lessons (excluding Spring AI), 4.1 and 4.2. | ✅ Baseline |
 | Earlier assignments | Assignments `3.19 - unit and integration testing`, `4.1 - secure software development & authentication Pt 1` and `4.2 - secure software development & authentication Pt2` are rolled into the API. | ✅ Baseline |
 | Module 4 assignment | **Tasks 1–4**: create a Dockerfile, build and test locally, deploy, and verify the deployment using the Simple CRM API instead of TaskFlow. **Deployed on Render**.| ✅ Baseline |
-| Stretch Option 1 — Add a CI Pipeline | Build, test and publish the API image to Docker Hub using GitHub Actions, alongside the Render deployment. | 🚧 WIP |
+| Stretch Option 1 — Add a CI Pipeline | Build, test and publish the API image to Docker Hub using GitHub Actions, alongside the Render deployment. | ✅ Complete |
 | Stretch Option 3 — Use your Simple CRM project | Containerized and deployed the API with PostgreSQL. The React frontend deployment and integration are not included. | ✅ Partial (no Simple CRM frontend) |
 | Stretch Option 4 —  Publish Versioned Docker Images | Use version or commit-SHA tags alongside `latest`. The planned CI pipeline adds commit-SHA tags; this option also requires at least two published versions and a Docker Hub tags screenshot. | 🚧 WIP |
 
@@ -19,13 +19,15 @@ I completed Tasks 1–4 using my **Simple CRM API** (Stretch Option 3 backend) i
 
 **GitHub**: https://github.com/johnphs-9/module4-deploy-simple-crm
 
-![API Docker Deployed](docs/design/simple-crm-API-arch.png)
+![API Docker Deployed](docs/design/simple-crm-API-arch_S1.png)
 
 ---
 
 ## Stretch Option 1 — add a CI pipeline to Docker Hub (GitHub Actions)
 
-For assignment **Stretch Option 1**, this branch configures a GitHub Actions CI pipeline (`.github/workflows/docker.yml`) to run on **every push to `main`** so that a **CI pipeline** to Docker Hub and the Render **deployment** pipeline can work side by side. 
+A GitHub Actions CI pipeline (`.github/workflows/docker.yml`) to run on **every push to `main`**. 
+- CI pipeline to Docker Hub and the Render deployment pipeline work side by side.
+- Auto-deploy on Render triggers only for changes under simple-crm-api/ (Root Directory filter); docs-only pushes intentionally skip redeploy. 
 
 | Pipeline | Trigger | What it does |
 | --- | --- | --- |
@@ -35,15 +37,17 @@ For assignment **Stretch Option 1**, this branch configures a GitHub Actions CI 
 ### Pipeline design
 
 - **Job 1 — `test`:** `actions/checkout` → `actions/setup-java` (Temurin 21, Maven cache) → `./mvnw -B clean install` (tests use the `test` profile backed by an H2 in-memory database).
-- **Job 2 — `publish`:** runs **only if tests pass** (`needs: test`) → `docker/login-action` authenticated with GitHub repository **secrets** `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` → `docker/build-push-action` with `context: simple-crm-api` and `push: true`.
-- **Docker Hub credentials are stored as GitHub repository secrets — never committed to code** (assignment requirement verified: `git ls-files` contains no tokens or passwords).
+- **Job 2 — `publish`:** runs only if tests pass (`needs: test`) → `docker/login-action` authenticated with GitHub repository **secrets**.
+- **Docker Hub credentials** are stored as GitHub repository secrets — never committed to code.
+
 - **Image tags configured for each successful publish:**
   - `johnphs9/module4-deploy-simple-crm:latest` — always points at the newest passing build,
   - `johnphs9/module4-deploy-simple-crm:g<short-SHA>` — one immutable tag per commit for traceability/rollback.
 
-### Links
+### Verification
 
-- Successful pipeline run: **<to be added after first run — GitHub Actions run link>**
+- First successful pipeline run (GitHub Actions): [#42773145649](<https://github.com/johnphs-9/module4-deploy-simple-crm/actions/runs/42773145649>)
+
 - Image on Docker Hub: <https://hub.docker.com/r/johnphs9/module4-deploy-simple-crm/tags>
 
 ---
@@ -197,6 +201,6 @@ Validation (enforced server-side, returns 400):
 
 ![Request served after service awake](docs/screenshots/Get_awake_result.png)
 
-- Database data remains persisted across service restarts.
+- Database data remains persisted across deployments and service restarts.
 
 ![Data persistence after waking](docs/screenshots/Get_awake_data_persistence.png)
