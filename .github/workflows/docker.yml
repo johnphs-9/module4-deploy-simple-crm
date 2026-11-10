@@ -1,5 +1,7 @@
-# Stretch Option 1: CI pipeline to Docker Hub
+# Stretch Option 1 + Stretch Option 4: CI pipeline to Docker Hub with SemVer + SHA tags
 # Builds, tests and publishes the Simple CRM API image on every push to main.
+# Tags published: latest (newest passing build), <MAJOR.MINOR.PATCH> (from VERSION file),
+# and g<short-SHA> (immutable per-commit build, for traceability/rollback).
 # Runs side by side with the Render deployment pipeline (which builds from the Dockerfile on push).
 # Docker Hub credentials are provided as repository secrets — never committed to code.
 
@@ -59,6 +61,20 @@ jobs:
         id: sha
         run: echo "short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
+      # Stretch Option 4: read the semantic version from the VERSION file at repo root.
+      # Fails the build if the file is missing or not MAJOR.MINOR.PATCH (Lesson 4.5).
+      - name: Read semantic version (VERSION file)
+        id: ver
+        working-directory: .
+        run: |
+          VER=$(sed -n 's/^\s*\([0-9]\+\.[0-9]\+\.[0-9]\+\)\s*$/\1/p' VERSION | head -1)
+          if [ -z "$VER" ]; then
+            echo "::error::VERSION file missing or not MAJOR.MINOR.PATCH — refusing to publish an unversioned image."
+            exit 1
+          fi
+          echo "semver=${VER}" >> "$GITHUB_OUTPUT"
+          echo "Publishing image version ${VER}"
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -72,4 +88,5 @@ jobs:
           push: true
           tags: |
             johnphs9/module4-deploy-simple-crm:latest
+            johnphs9/module4-deploy-simple-crm:${{ steps.ver.outputs.semver }}
             johnphs9/module4-deploy-simple-crm:g${{ steps.sha.outputs.short }}

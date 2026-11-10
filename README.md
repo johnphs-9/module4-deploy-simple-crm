@@ -54,6 +54,44 @@ A GitHub Actions CI pipeline (`.github/workflows/docker.yml`) to run on **every 
 
 ---
 
+## Stretch Option 4 — publish versioned Docker images (SemVer + Git SHA)
+
+Images are published with **Semantic Versioning (MAJOR.MINOR.PATCH, Lesson 4.5)** instead of only `latest`, plus the immutable commit-SHA tag already introduced in Option 1. All tags live on <https://hub.docker.com/r/johnphs9/module4-deploy-simple-crm/tags>.
+
+### Versioning scheme
+
+| Tag | Meaning | Rule |
+| --- | --- | --- |
+| `MAJOR.MINOR.PATCH` (e.g. `1.1.0`) | Release version | Source of truth = the `VERSION` file at the repo root; a **MINOR** bump marks a new feature, a **PATCH** bump a fix/docs change, a **MAJOR** bump a breaking change |
+| `g<short-SHA>` (e.g. `gdfbc582`) | Immutable build pointer | One per commit, never moved — used for traceability and rollback |
+| `latest` | Newest passing build | Always points at the image built from the most recent successful `main` push |
+
+How the CI enforces it (`.github/workflows/docker.yml`):
+- The `publish` job reads the first `MAJOR.MINOR.PATCH` line from the root `VERSION` file and tags the image with it.
+- If `VERSION` is missing or malformed the pipeline **fails** with an error — no unversioned image can ever be published by accident.
+- Each push to `main` therefore publishes three tags: `latest` (moving), `<version>` (release) and `g<short-SHA>` (immutable).
+
+### Version history
+
+| Version | What changed | How it was published |
+| --- | --- | --- |
+| `1.0.1` | JPWT login fix — all three accounts can obtain a JWT | Local build only (pre-Docker Hub) |
+| `1.0.2` | `BasicAuthenticationEntryPoint` fix — browser shows native login prompt | Local build → pushed manually |
+| `1.0.3` | Customer data preserved across service restarts | Local build → pushed manually |
+| `1.0.4` | Stretch Option 1 complete: CI pipeline to Docker Hub | CI build `gdfbc582` retagged as `1.0.4` on Docker Hub |
+| `1.1.0` | Stretch Option 4: SemVer tagging added to the CI pipeline (MINOR bump — new CI feature) | **Automatically** by CI from the `VERSION` file |
+
+`latest` = the newest version (`1.1.0` and onwards is always the newest published build).
+
+### Verification
+
+- Docker Hub tags (live): <https://hub.docker.com/r/johnphs9/module4-deploy-simple-crm/tags>
+- Successful CI run publishing `1.1.0`: <https://github.com/johnphs-9/module4-deploy-simple-crm/actions> _(filled in after the first versioned run)_
+
+![Docker Hub version tags](docs/screenshots/Docker-Hub-tags.png)
+
+---
+
 ## Spring Security for Simple CRM API 
 
 ### Authentication and Authorisation (RBAC)
