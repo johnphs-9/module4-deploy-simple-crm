@@ -2,6 +2,8 @@
 
 I completed Tasks 1–4 using my **Simple CRM API** (Stretch Option 3 backend) instead of TaskFlow, deployed on Render per assignment requirements.
 
+For the optional stretch goal, I added **Stretch Option 1 — a CI pipeline** that builds, tests and publishes the Docker image to Docker Hub on every push to `main` (see [Stretch S1 — CI pipeline to Docker Hub](#stretch-s1--ci-pipeline-to-docker-hub-github-actions)).
+
 ## Objective
 1. simple-crm-api is a Spring Boot 4.1.1 / Java 21 lesson build that **rolls up every lesson in Module 3** (excluding Spring AI), plus Assignments **3.19, 4.1 and 4.2** (unit and integration testing, secure software development & authentication, PT1 and PT2), built on top of the earlier `simple-crm` REST API.
 
@@ -14,6 +16,31 @@ I completed Tasks 1–4 using my **Simple CRM API** (Stretch Option 3 backend) i
 **GitHub**: https://github.com/johnphs-9/module4-deploy-simple-crm
 
 ![API Docker Deployed](docs/design/simple-crm-API-arch.png)
+
+---
+
+## Stretch S1 — CI pipeline to Docker Hub (GitHub Actions)
+
+Per assignment **Stretch Option 1**, I added a GitHub Actions CI pipeline (`.github/workflows/docker.yml`) that runs on **every push to `main`** so that a **CI pipeline** to Docker Hub and the Render **deployment** pipeline work side by side:
+
+| Pipeline | Trigger | What it does |
+| --- | --- | --- |
+| **CI pipeline** (GitHub Actions) | push to `main` | Builds with Maven → runs all unit & integration tests (H2 in-memory, no DB needed in CI) → on test success builds the Docker image (`simple-crm-api/` context) and pushes it to Docker Hub |
+| **Deployment pipeline** (Render) | push to `main` | Builds the Dockerfile and deploys the web service on Render |
+
+### Pipeline design
+
+- **Job 1 — `test`:** `actions/checkout` → `actions/setup-java` (Temurin 21, Maven cache) → `./mvnw test` (all tests use the `test` profile backed by an H2 in-memory database).
+- **Job 2 — `publish`:** runs **only if tests pass** (`needs: test`) → `docker/login-action` authenticated with GitHub repository **secrets** `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` → `docker/build-push-action` with `context: simple-crm-api` and `push: true`.
+- **Docker Hub credentials are stored as GitHub repository secrets — never committed to code** (assignment requirement verified: `git ls-files` contains no tokens or passwords).
+- **Image tags pushed each run:**
+  - `johnphs9/module4-deploy-simple-crm:latest` — always points at the newest passing build,
+  - `johnphs9/module4-deploy-simple-crm:g<short-SHA>` — one immutable tag per commit for traceability/rollback.
+
+### Links
+
+- Successful pipeline run: **<to be added after first run — GitHub Actions run link>**
+- Image on Docker Hub: <https://hub.docker.com/r/johnphs9/module4-deploy-simple-crm/tags>
 
 ---
 
