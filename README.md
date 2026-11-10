@@ -19,6 +19,8 @@ I completed Tasks 1–4 (_"Baseline"_) using my **Simple CRM API** (Stretch Opti
 
 **GitHub**: https://github.com/johnphs-9/module4-deploy-simple-crm
 
+### Simple CRM API architecture
+
 ![API Docker Deployed](docs/design/simple-crm-API-arch_S1.png)
 
 ---
