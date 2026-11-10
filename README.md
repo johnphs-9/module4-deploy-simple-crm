@@ -15,7 +15,8 @@ I completed Tasks 1–4 (_"Baseline"_) using my **Simple CRM API** (Stretch Opti
 
 ## Backend Deployed
 
-| --- | ---: |
+| | URL |
+| --- | --- |
 | **GitHub**           | https://github.com/johnphs-9/module4-deploy-simple-crm                              |
 | **API URL (Render)** | https://m4-assignment-simple-crm-api.onrender.com                                   |
 | **Docker Hub**       | https://hub.docker.com/repository/docker/johnphs9/module4-deploy-simple-crm/general |
