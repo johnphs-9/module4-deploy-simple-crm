@@ -7,4 +7,4 @@
 #   MAJOR — breaking API/auth contract changes
 #   MINOR — new features (e.g. 1.1.0 = SemVer image tagging added to the CI pipeline)
 #   PATCH — bug fixes, docs, logging tweaks
-1.1.0
+1.1.1

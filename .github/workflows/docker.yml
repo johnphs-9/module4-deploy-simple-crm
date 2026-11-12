@@ -53,6 +53,9 @@ jobs:
     name: Build_and_publish_to_Docker_Hub
     needs: test
     runs-on: ubuntu-latest
+    concurrency:
+      group: docker-hub-publish
+      cancel-in-progress: false
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -81,12 +84,45 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Push to Docker Hub
+      - name: Publish commit image
         uses: docker/build-push-action@v6
         with:
           context: simple-crm-api
           push: true
-          tags: |
-            johnphs9/module4-deploy-simple-crm:latest
-            johnphs9/module4-deploy-simple-crm:${{ steps.ver.outputs.semver }}
-            johnphs9/module4-deploy-simple-crm:sha-${{ steps.sha.outputs.short }}
+          tags: johnphs9/module4-deploy-simple-crm:sha-${{ steps.sha.outputs.short }}
+
+      # The publish lock prevents two runs from moving tags at the same time.
+      # Skip moving tags when a newer commit has already reached main.
+      - name: Check current main and release version
+        id: release
+        run: |
+          git fetch --no-tags origin main
+          if [ "$(git rev-parse FETCH_HEAD)" != "$GITHUB_SHA" ]; then
+            echo "Current commit is no longer the tip of main; leaving moving tags alone."
+            echo "current=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "current=true" >> "$GITHUB_OUTPUT"
+          # A version tag is created only when VERSION changed in this commit.
+          git fetch --no-tags --depth=2 origin "$GITHUB_SHA"
+          if git rev-parse HEAD^ >/dev/null 2>&1 && git diff --quiet HEAD^ HEAD -- VERSION; then
+            echo "version_changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "version_changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish latest image
+        if: steps.release.outputs.current == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: simple-crm-api
+          push: true
+          tags: johnphs9/module4-deploy-simple-crm:latest
+
+      - name: Publish release version
+        if: steps.release.outputs.current == 'true' && steps.release.outputs.version_changed == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: simple-crm-api
+          push: true
+          tags: johnphs9/module4-deploy-simple-crm:${{ steps.ver.outputs.semver }}

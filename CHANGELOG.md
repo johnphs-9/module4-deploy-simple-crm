@@ -12,6 +12,16 @@ number lives in the root `VERSION` file, which the CI pipeline reads to tag Dock
 | Docker Hub (`johnphs9/module4-deploy-simple-crm`) | the versions below | `<version>`, `sha-<short-SHA>` (legacy `g<short-SHA>`), `latest` |
 | Render (`m4-assignment-simple-crm-api`) | deploys the same source | built directly from the Dockerfile on push to `main` |
 
+## [1.1.1] — 2026-11-11
+
+### Changed
+
+- Serialize Docker Hub publishing; publish SHA tags per running job, and update `latest` only
+  for the current `main` tip. Publish a version tag only when `VERSION` changes; a newer
+  commit can cause that release tag to be skipped.
+- Require account credentials through environment variables in the development profile.
+- Update CI/versioning documentation and diagram, and correct API authentication examples.
+
 ## [1.1.0] — 2026-11-10
 
 ### Added
