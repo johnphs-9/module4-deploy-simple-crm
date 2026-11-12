@@ -11,7 +11,7 @@ I completed Tasks 1–4 (_"Baseline"_) using my **Simple CRM API** (Stretch Opti
 | Module 4 assignment | **Tasks 1–4**: create a Dockerfile, build and test locally, deploy, and verify the deployment using the Simple CRM API instead of TaskFlow. **Deployed on Render**.| ✅ Baseline |
 | Stretch Option 1 — Add a CI Pipeline | Build, test and publish the API image to Docker Hub using GitHub Actions, alongside the Render deployment. | ✅ Complete |
 | Stretch Option 3 — Use your Simple CRM project | Containerized and deployed the API with PostgreSQL. The React frontend deployment and integration are not included. | ✅ Partial (no Simple CRM frontend) |
-| Stretch Option 4 — Publish Versioned Docker Images | SemVer (`MAJOR.MINOR.PATCH`) release tags sourced from the root `VERSION` file, `sha-<short-SHA>` tags corresponding to Git commit id, and `latest` always pointing at the newest build — published to Docker Hub with the tags-page screenshot below. | ✅ Complete |
+| Stretch Option 4 — Publish Versioned Docker Images | SemVer (`MAJOR.MINOR.PATCH`) release tags sourced from the root `VERSION` file, `sha-<short-SHA>` tags corresponding to Git commit id, and `latest` for the most recently published build from `main` — published to Docker Hub with the tags-page screenshot below. | ✅ Complete |
 
 ## Backend Deployed
 
@@ -21,7 +21,6 @@ I completed Tasks 1–4 (_"Baseline"_) using my **Simple CRM API** (Stretch Opti
 | **API URL (Render)** | https://m4-assignment-simple-crm-api.onrender.com                                   |
 | **Docker Hub**       | https://hub.docker.com/repository/docker/johnphs9/module4-deploy-simple-crm/general |
 
- 
 
 ### Simple CRM API architecture
 
@@ -47,8 +46,10 @@ A GitHub Actions CI pipeline (`.github/workflows/docker.yml`) to run on **every 
 - **Docker Hub credentials** are stored as GitHub repository secrets — never committed to code.
 
 - **Image tags configured for each successful publish:**
-  - `johnphs9/module4-deploy-simple-crm:latest` — always points at the newest passing build,
+  - `johnphs9/module4-deploy-simple-crm:latest` — the most recently published build from `main`,
   - `johnphs9/module4-deploy-simple-crm:sha-<short-SHA>` — one immutable tag per commit for traceability/rollback (references Git commit id)
+
+![GitHub Actions flow](docs/design/CI-flow.png)
 
 ### Verification
 
@@ -68,18 +69,30 @@ All tags live on <https://hub.docker.com/r/johnphs9/module4-deploy-simple-crm/ta
 
 | Tag | Meaning | Rule |
 | --- | --- | --- |
-| `MAJOR.MINOR.PATCH` (e.g. `1.1.0`) | Release version | Source of truth = the `VERSION` file at the repo root; a **MINOR** bump marks a new feature, a **PATCH** bump a fix/docs change, a **MAJOR** bump a breaking change |
-| `sha-<short-SHA>` (e.g. `sha-281b303`) | Immutable build pointer | One per commit, never moved — used for traceability and rollback |
-| `latest` | Newest passing build | Always points at the image built from the most recent successful `main` push |
+| `MAJOR.MINOR.PATCH` (e.g. `1.1.0`) | Release version | Source of truth = the `VERSION` file at the repo root. |
+| `sha-<short-SHA>` (e.g. `sha-281b303`) | Immutable build pointer | One per commit, never moved — used for traceability and rollback. References Git commit id. |
+| `latest` | Recent build | Updated when a passing build is published from `main` |
 
-How the CI enforces it (`.github/workflows/docker.yml`):
+### Version Tag Bump rules
+
+| Tag | Usage | 
+| --- | --- | 
+| MAJOR | Breaking change, e.g., API/auth contract changes |
+| MINOR | New features (e.g. 1.1.0 = SemVer image tagging added to the CI pipeline); backward compatible | 
+| PATCH | Bug fixes, minor review/security changes, logging tweaks, etc. |
+
+### How the CI enforces it (`.github/workflows/docker.yml`):
 - The `publish` job reads the first `MAJOR.MINOR.PATCH` line from the root `VERSION` file and tags the image with it.
 - If `VERSION` is missing or malformed the pipeline **fails** with an error — no unversioned image can ever be published by accident.
-- Each push to `main` therefore publishes three tags: `latest` (moving), `<version>` (release) and `sha-<short-SHA>` (immutable).
+- Each publish job that runs publishes a SHA tag. When several changes are pushed close together, GitHub may skip a waiting job. Before updating `latest`, the pipeline checks whether a newer change has reached `main`; if so, it leaves `latest` unchanged.
+- A version tag is published when the `VERSION` file changes. Use a new, unused version for each release; the workflow does not enforce this. 
+- If a newer change reaches `main` before the version update is published, the version tag is skipped.
+- Tag-convention note: older builds use `g<short-SHA>` convention (e.g. `g281b303`) — same meaning (immutable per-commit pointer).
 
-- Tag-convention note: builds pushed before this prefix was standardised keep their legacy `g<short-SHA>` names (e.g. `g281b303`) — same meaning (immutable per-commit pointer), older format.
+### Change Log
 
 Per-version change details: [CHANGELOG.md](CHANGELOG.md).
+
 
 ### Version history
 
@@ -91,7 +104,12 @@ Per-version change details: [CHANGELOG.md](CHANGELOG.md).
 | `1.0.4` | Stretch Option 1 complete: CI pipeline to Docker Hub | CI build `gdfbc582` retagged as `1.0.4` on Docker Hub |
 | `1.1.0` | Stretch Option 4: SemVer tagging added to the CI pipeline (MINOR bump — new CI feature) | **Automatically** by CI from the `VERSION` file |
 
-`latest` = the newest version (`1.1.0` and onwards is always the newest published build).
+`latest` is updated as new builds are published. Version tags are published separately when `VERSION` changes.
+
+**Note**:
+- For example, if VERSION is 1.1.0 and you push a documentation change without changing that file, the pipeline can update latest, but it won’t create a new version tag. 
+- However, if you change VERSION to 1.1.1, then the pipeline can publish both latest and 1.1.1 for that build.
+
 
 ### Verification
 
@@ -110,12 +128,12 @@ Per-version change details: [CHANGELOG.md](CHANGELOG.md).
 | Request | user | manager | admin |
 |---|---|---|---|
 | username | _user_ | _manager_ | _admin_ |
-| password | _user123_ | _manager123_ | _admin123_ | 
+| password | configured via environment | configured via environment | configured via environment |
 | GET `/customers` | ✅ 200 | ✅ 200 | ✅ 200 |
 | GET `/customers/{id}` | ✅ 200 | ✅ 200 | ✅ 200 |
 | POST `/customers` | ❌ 403 | ❌ 403 | ✅ 201 |
 | PUT `/customers/{id}` | ❌ 403 | ✅ 200 | ✅ 200 |
-| DELETE `/customers/{id}` | ❌ 403 | ❌ 403 | ✅ 200 |
+| DELETE `/customers/{id}` | ❌ 403 | ❌ 403 | ✅ 204 |
 
 ### Suggested shell variables to set (export) for manual testing using curl
 
@@ -125,7 +143,7 @@ APP_USER_PASSWORD=user123
 APP_ADMIN_USERNAME=admin
 APP_ADMIN_PASSWORD=admin123
 APP_MANAGER_USERNAME=manager
-APP_MANAGER_PASSWORD=manger123
+APP_MANAGER_PASSWORD=manager123
 
 BASE="https://m4-assignment-simple-crm-api.onrender.com"
 
@@ -142,7 +160,7 @@ The app uses **two complementary auth mechanisms**:
 
 | Mechanism | Where it applies | How to authenticate |
 |-----------|------------------|---------------------|
-| **HTTP Basic** (Assignment 4.1) | everything else (`/customers/**`, health) | `-u <user>:<pass>` — curl flag or `Authorization: Basic ...` header |
+| **HTTP Basic** (Assignment 4.1) | protected customer endpoints (`/customers/**`) | `-u <user>:<pass>` — curl flag or `Authorization: Basic ...` header |
 | **JWT Bearer** (Assignment 4.2) | `POST /auth/login` issues the token; `GET /api/**` requires it | `Authorization: Bearer <TOKEN>` header |
 
 **In-memory users**: 
@@ -150,7 +168,7 @@ The app uses **two complementary auth mechanisms**:
 - `manager` → `ROLE_MANAGER`
 - `admin` → `ROLE_ADMIN`
 
-All three accounts can obtain a JWT at `POST /auth/login`
+All three accounts can obtain a JWT at `POST /auth/login`. The credentials shown here are examples; configure unique credentials through environment variables for any public deployment.
 
 ### Endpoint summary
 
